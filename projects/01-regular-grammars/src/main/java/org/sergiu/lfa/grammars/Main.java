@@ -29,5 +29,37 @@ public class Main {
             String test = grammar.generateString();
             System.out.println(test + " -> " + (fa.accepts(test) ? "ACCEPTED" : "REJECTED"));
         }
+
+        testUserInput(fa, terminals);
+    }
+
+    private static void testUserInput(FiniteAutomaton automaton, Set<String> validSymbols) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nEnter a string to test (or 'exit' to quit): ");
+            String input = scanner.nextLine().trim();
+
+            if (input.equalsIgnoreCase("exit")) {
+                break;
+            }
+
+            boolean validInput = true;
+            for (char c : input.toCharArray()) {
+                if (!validSymbols.contains(String.valueOf(c))) {
+                    System.out.println("Invalid character '" + c + "'. Valid symbols are: " + validSymbols);
+                    validInput = false;
+                    break;
+                }
+            }
+
+            if (validInput) {
+                boolean accepted = automaton.accepts(input);
+                System.out.println("'" + input + "' is " + (accepted ? "ACCEPTED" : "REJECTED") + " by the automaton");
+            }
+        }
+
+        scanner.close();
+        System.out.println("Goodbye!");
     }
 }
