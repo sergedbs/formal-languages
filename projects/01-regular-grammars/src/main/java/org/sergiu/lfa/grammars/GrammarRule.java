@@ -1,11 +1,11 @@
 package org.sergiu.lfa.grammars;
 
-public class GrammarRules {
+public class GrammarRule {
     private final String from;
     private final String terminal;
     private final String to;
 
-    public GrammarRules(String from, String terminal, String to) {
+    public GrammarRule(String from, String terminal, String to) {
         this.from = from;
         this.terminal = terminal;
         this.to = to;

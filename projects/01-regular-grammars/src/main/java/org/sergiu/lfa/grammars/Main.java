@@ -8,14 +8,14 @@ public class Main {
         Set<String> nonTerminals = new HashSet<>(Arrays.asList("S", "B", "D"));
         Set<String> terminals = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
 
-        List<GrammarRules> rules = new ArrayList<>();
-        rules.add(new GrammarRules("S", "a", "S"));
-        rules.add(new GrammarRules("S", "b", "B"));
-        rules.add(new GrammarRules("B", "c", "B"));
-        rules.add(new GrammarRules("B", "d", null));
-        rules.add(new GrammarRules("B", "a", "D"));
-        rules.add(new GrammarRules("D", "a", "B"));
-        rules.add(new GrammarRules("D", "b", null));
+        List<GrammarRule> rules = new ArrayList<>();
+        rules.add(new GrammarRule("S", "a", "S"));
+        rules.add(new GrammarRule("S", "b", "B"));
+        rules.add(new GrammarRule("B", "c", "B"));
+        rules.add(new GrammarRule("B", "d", null));
+        rules.add(new GrammarRule("B", "a", "D"));
+        rules.add(new GrammarRule("D", "a", "B"));
+        rules.add(new GrammarRule("D", "b", null));
 
         String startSymbol = "S";
 
