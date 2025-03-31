@@ -20,10 +20,14 @@ public class Main {
         String startSymbol = "S";
 
         Grammar grammar = new Grammar(nonTerminals, terminals, rules, startSymbol);
+        FiniteAutomaton fa = grammar.toFiniteAutomaton();
 
-        System.out.println("Generated strings:");
+        fa.printTransitions();
+
+        System.out.println("\nTesting generated strings:");
         for (int i = 0; i < 5; i++) {
-            System.out.println("  → " + grammar.generateString());
+            String test = grammar.generateString();
+            System.out.println(test + " -> " + (fa.accepts(test) ? "ACCEPTED" : "REJECTED"));
         }
     }
 }

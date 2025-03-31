@@ -44,4 +44,29 @@ public class Grammar {
         return result.toString();
     }
 
+    public FiniteAutomaton toFiniteAutomaton() {
+        Set<String> states = new HashSet<>(nonTerminals);
+        Set<String> alphabet = new HashSet<>(terminals);
+        Map<String, Map<String, String>> transitions = new HashMap<>();
+        Set<String> finalStates = new HashSet<>();
+
+        for (String state : states) {
+            transitions.put(state, new HashMap<>());
+        }
+
+        for (GrammarRule rule : rules) {
+            String from = rule.getFrom();
+            String symbol = rule.getTerminal();
+            String to = rule.getTo();
+
+            if (to != null) {
+                transitions.get(from).put(symbol, to);
+            } else {
+                finalStates.add(from);
+            }
+        }
+
+        return new FiniteAutomaton(states, alphabet, transitions, startSymbol, finalStates);
+    }
+
 }
