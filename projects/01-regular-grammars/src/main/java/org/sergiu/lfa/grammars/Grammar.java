@@ -1,9 +1,6 @@
 package org.sergiu.lfa.grammars;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Grammar {
     private Set<String> nonTerminals;
