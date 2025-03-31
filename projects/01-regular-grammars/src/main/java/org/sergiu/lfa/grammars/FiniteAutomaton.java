@@ -31,6 +31,12 @@ public class FiniteAutomaton {
             }
 
             currentState = transitions.get(currentState).get(sym);
+
+            // If we reach a final state transition marker
+            if (currentState.equals("__FINAL__")) {
+                // Check if this is the last character in the input
+                return input.indexOf(symbol) == input.length() - 1;
+            }
         }
 
         return finalStates.contains(currentState);

@@ -63,9 +63,11 @@ public class Grammar {
                 transitions.get(from).put(symbol, to);
             } else {
                 finalStates.add(from);
+                transitions.get(from).put(symbol, "__FINAL__");
             }
         }
 
+        System.out.println("Final states: " + finalStates);
         return new FiniteAutomaton(states, alphabet, transitions, startSymbol, finalStates);
     }
 
