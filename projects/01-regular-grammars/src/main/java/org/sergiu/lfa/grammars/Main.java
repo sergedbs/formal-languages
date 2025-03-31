@@ -20,5 +20,10 @@ public class Main {
         String startSymbol = "S";
 
         Grammar grammar = new Grammar(nonTerminals, terminals, rules, startSymbol);
+
+        System.out.println("Generated strings:");
+        for (int i = 0; i < 5; i++) {
+            System.out.println("  → " + grammar.generateString());
+        }
     }
 }
