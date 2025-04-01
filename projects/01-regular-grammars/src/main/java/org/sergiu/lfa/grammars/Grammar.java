@@ -10,7 +10,7 @@ public class Grammar {
     private final String startSymbol;
     private final Random random;
 
-    private final Map<String, List<GrammarRule>> rulesByFrom;
+    // private final Map<String, List<GrammarRule>> rulesByFrom;
 
     public Grammar(Set<String> nonTerminals, Set<String> terminals,
                   List<GrammarRule> rules, String startSymbol) {
@@ -25,9 +25,9 @@ public class Grammar {
         this.startSymbol = startSymbol;
         this.random = new Random();
 
-        // Pre-compute rules by non-terminal for faster access
+/*        // Pre-compute rules by non-terminal for faster access
         this.rulesByFrom = rules.stream()
-                .collect(Collectors.groupingBy(GrammarRule::from));
+                .collect(Collectors.groupingBy(GrammarRule::from));*/
     }
 
     public Set<String> getNonTerminals() {
@@ -46,7 +46,7 @@ public class Grammar {
         return startSymbol;
     }
 
-    public String generateString() {
+/*    public String generateString() {
         StringBuilder result = new StringBuilder();
         String current = startSymbol;
 
@@ -67,7 +67,7 @@ public class Grammar {
         }
 
         return result.toString();
-    }
+    }*/
 
 /*    public FiniteAutomaton toFiniteAutomaton() {
         Set<String> states = new HashSet<>(nonTerminals);

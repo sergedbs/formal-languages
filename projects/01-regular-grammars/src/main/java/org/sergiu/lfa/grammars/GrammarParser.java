@@ -21,18 +21,23 @@ public class GrammarParser {
         Set<String> nonTerminals = new LinkedHashSet<>(extractElements(content, NON_TERMINALS_PATTERN));
         System.out.println(nonTerminals);
 
+
         // Extract terminals
         Set<String> terminals = new HashSet<>(extractElements(content, TERMINALS_PATTERN));
         System.out.println(terminals);
 
         // Check if the start symbol is defined
         String startSymbol = nonTerminals.contains("S")? "S" : null;
+        if (startSymbol == null) {
+            throw new IllegalArgumentException("Start symbol 'S' is not defined in the non-terminals set");
+        }
 
         // Extract rules
         // List<GrammarRule> rules = extractRules(content, nonTerminals, terminals);
 
 
-        return new Grammar(nonTerminals, terminals, null, startSymbol);
+        // return new Grammar(nonTerminals, terminals, null, startSymbol);
+        return null;
     }
 
     private Set<String> extractElements(String content, Pattern pattern) {
@@ -121,7 +126,7 @@ public class GrammarParser {
         rules.add(new GrammarRule(from, terminal, to));
     }*/
 
-    public static void printGrammar(Grammar grammar) {
+/*    public static void printGrammar(Grammar grammar) {
         System.out.println("Non-Terminals: " + grammar.getNonTerminals());
         System.out.println("Terminals: " + grammar.getTerminals());
         System.out.println("Start Symbol: " + grammar.getStartSymbol());
@@ -137,5 +142,5 @@ public class GrammarParser {
         for (Map.Entry<String, List<String>> entry : groupedRules.entrySet()) {
             System.out.println("  " + entry.getKey() + " -> " + String.join(" | ", entry.getValue()));
         }
-    }
+    }*/
 }
