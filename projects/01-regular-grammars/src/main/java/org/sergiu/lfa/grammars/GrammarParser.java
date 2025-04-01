@@ -34,7 +34,6 @@ public class GrammarParser {
         // Extract rules
         // List<GrammarRule> rules = extractRules(content, nonTerminals, terminals);
 
-
         return new Grammar(nonTerminals, terminals, startSymbol, null);
     }
 

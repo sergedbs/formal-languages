@@ -2,11 +2,11 @@ package org.sergiu.lfa.grammars;
 
 import java.util.*;
 
-public class Grammar_old {
+public class GrammarProcessor {
     private final Grammar grammar;
     private final Random random;
 
-    public Grammar_old(Grammar grammar) {
+    public GrammarProcessor(Grammar grammar) {
         Objects.requireNonNull(grammar, "The grammar cannot be null");
         this.grammar = grammar;
         this.random = new Random();

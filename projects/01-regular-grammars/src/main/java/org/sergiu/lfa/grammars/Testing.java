@@ -18,6 +18,6 @@ public class Testing {
             throw new IOException("File does not exist: " + Path.of(filePath));
         }
 
-        Grammar_old grammar = grammarParser.parseFromFile(path);
+        Grammar grammar = grammarParser.parseFromFile(path);
     }
 }
