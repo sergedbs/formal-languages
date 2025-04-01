@@ -7,9 +7,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.sergiu.lfa.grammars.Main.*;
+
 public class GrammarParser {
-    private static final Pattern NON_TERMINALS_PATTERN = Pattern.compile("V_N=\\{\\s*([^}]*)\\s*};?\n");
-    private static final Pattern TERMINALS_PATTERN = Pattern.compile("V_T=\\{\\s*([^}]*)\\s*};?\n");
 
     public Grammar parseFromFile(Path filePath) throws IOException {
         String content = Files.readString(filePath);
@@ -18,12 +18,11 @@ public class GrammarParser {
 
     public Grammar parseFromString(String content) {
         // Extract non-terminals
-        Set<String> nonTerminals = new LinkedHashSet<>(extractElements(content, NON_TERMINALS_PATTERN));
+        Set<String> nonTerminals = new HashSet<>(extractElements(content, "V_N"));
         System.out.println(nonTerminals);
 
-
         // Extract terminals
-        Set<String> terminals = new HashSet<>(extractElements(content, TERMINALS_PATTERN));
+        Set<String> terminals = new HashSet<>(extractElements(content, "V_T"));
         System.out.println(terminals);
 
         // Check if the start symbol is defined
@@ -36,13 +35,13 @@ public class GrammarParser {
         // List<GrammarRule> rules = extractRules(content, nonTerminals, terminals);
 
 
-        // return new Grammar(nonTerminals, terminals, null, startSymbol);
-        return null;
+        return new Grammar(nonTerminals, terminals, startSymbol, null);
     }
 
-    private Set<String> extractElements(String content, Pattern pattern) {
+    private Set<String> extractElements(String content, String label) {
+        Pattern p = Pattern.compile(String.format(REGEX_PATTERN, label));
         Set<String> result = new LinkedHashSet<>();
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = p.matcher(content);
         if (matcher.find()) {
             String[] elements = matcher.group(1).split(",");
             for (String element : elements) {
