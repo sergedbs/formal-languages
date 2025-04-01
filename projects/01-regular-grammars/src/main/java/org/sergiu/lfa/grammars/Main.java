@@ -5,15 +5,12 @@ import java.util.*;
 
 public class Main {
 
+    public static final String RULES_FILE_PATH = "projects/01-regular-grammars/src/main/resources/rules.txt";
+
     static Testing testing = new Testing();
 
     public static void main(String[] args) {
         try {
-            String filePath = "rules.txt";
-
-            if (args.length > 0) {
-                filePath = args[0];
-            }
 
             testing.test();
 
@@ -29,7 +26,6 @@ public class Main {
 
         } catch (IOException e) {
             System.err.println("Error processing grammar file: " + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
             System.err.println("Unexpected error: " + e.getMessage());
             e.printStackTrace();

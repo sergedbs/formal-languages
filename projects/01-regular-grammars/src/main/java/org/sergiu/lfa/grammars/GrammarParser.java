@@ -11,8 +11,8 @@ public class GrammarParser {
     private static final Pattern NON_TERMINALS_PATTERN = Pattern.compile("V_N=\\{\\s*([^}]*)\\s*};?\n");
     private static final Pattern TERMINALS_PATTERN = Pattern.compile("V_T=\\{\\s*([^}]*)\\s*};?\n");
 
-    public Grammar parseFromFile(String filePath) throws IOException {
-        String content = Files.readString(Path.of(filePath));
+    public Grammar parseFromFile(Path filePath) throws IOException {
+        String content = Files.readString(filePath);
         return parseFromString(content);
     }
 
