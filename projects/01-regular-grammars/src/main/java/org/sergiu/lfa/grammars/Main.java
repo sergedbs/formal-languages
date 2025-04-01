@@ -1,65 +1,89 @@
 package org.sergiu.lfa.grammars;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Main {
+
+    static Testing testing = new Testing();
+
     public static void main(String[] args) {
+        try {
+            String filePath = "rules.txt";
 
-        Set<String> nonTerminals = new HashSet<>(Arrays.asList("S", "B", "D"));
-        Set<String> terminals = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
+            if (args.length > 0) {
+                filePath = args[0];
+            }
 
-        List<GrammarRule> rules = new ArrayList<>();
-        rules.add(new GrammarRule("S", "a", "S"));
-        rules.add(new GrammarRule("S", "b", "B"));
-        rules.add(new GrammarRule("B", "c", "B"));
-        rules.add(new GrammarRule("B", "d", null));
-        rules.add(new GrammarRule("B", "a", "D"));
-        rules.add(new GrammarRule("D", "a", "B"));
-        rules.add(new GrammarRule("D", "b", null));
+            testing.test();
 
-        String startSymbol = "S";
+            System.out.println("--- PARSED GRAMMAR ---");
+            // GrammarParser.printGrammar(grammar);
 
-        Grammar grammar = new Grammar(nonTerminals, terminals, rules, startSymbol);
-        FiniteAutomaton fa = grammar.toFiniteAutomaton();
+            System.out.println("\n--- FINITE AUTOMATON ---");
+/*            fa.printTransitions();
 
-        fa.printTransitions();
+            testGeneratedStrings(grammar, fa);
 
-        System.out.println("\nTesting generated strings:");
+            testUserInput(fa, grammar.getTerminals());*/
+
+        } catch (IOException e) {
+            System.err.println("Error processing grammar file: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+/*    private static void testGeneratedStrings(Grammar grammar, FiniteAutomaton automaton) {
+        System.out.println("\nTESTING GENERATED STRINGS:");
         for (int i = 0; i < 5; i++) {
             String test = grammar.generateString();
-            System.out.println(test + " -> " + (fa.accepts(test) ? "ACCEPTED" : "REJECTED"));
+            boolean accepted = automaton.accepts(test);
+            System.out.printf("String: %s -> %s%n", test, accepted ? "ACCEPTED" : "REJECTED");
         }
-
-        testUserInput(fa, terminals);
     }
 
     private static void testUserInput(FiniteAutomaton automaton, Set<String> validSymbols) {
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.println("\nUSER INPUT TESTING:");
+            System.out.println("Valid symbols: " + String.join(", ", validSymbols));
 
-        while (true) {
-            System.out.println("\nEnter a string to test (or 'exit' to quit): ");
-            String input = scanner.nextLine().trim();
+            while (true) {
+                System.out.print("\nEnter a string to test (or 'exit' to quit): ");
+                String input = scanner.nextLine().trim();
 
-            if (input.equalsIgnoreCase("exit")) {
-                break;
-            }
-
-            boolean validInput = true;
-            for (char c : input.toCharArray()) {
-                if (!validSymbols.contains(String.valueOf(c))) {
-                    System.out.println("Invalid character '" + c + "'. Valid symbols are: " + validSymbols);
-                    validInput = false;
+                if (input.equalsIgnoreCase("exit")) {
                     break;
+                }
+
+                if (validateInput(input, validSymbols)) {
+                    boolean accepted = automaton.accepts(input);
+                    System.out.printf("'%s' is %s by the automaton%n",
+                            input, accepted ? "ACCEPTED" : "REJECTED");
                 }
             }
 
-            if (validInput) {
-                boolean accepted = automaton.accepts(input);
-                System.out.println("'" + input + "' is " + (accepted ? "ACCEPTED" : "REJECTED") + " by the automaton");
+            System.out.println("Goodbye!");
+        }
+    }*/
+
+    private static boolean validateInput(String input, Set<String> validSymbols) {
+        if (input.isEmpty()) {
+            System.out.println("Please enter a non-empty string.");
+            return false;
+        }
+
+        for (char c : input.toCharArray()) {
+            String symbol = String.valueOf(c);
+            if (!validSymbols.contains(symbol)) {
+                System.out.printf("Invalid character '%s'. Valid symbols are: %s%n",
+                        symbol, String.join(", ", validSymbols));
+                return false;
             }
         }
 
-        scanner.close();
-        System.out.println("Goodbye!");
+        return true;
     }
 }
