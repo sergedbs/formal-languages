@@ -28,28 +28,18 @@ public class GrammarProcessor {
         return grammar.startSymbol();
     }
 
-/*    public String generateString() {
+    public String generateString() {
+
         StringBuilder result = new StringBuilder();
-        String current = startSymbol;
+        int length = random.nextInt(1, 10);
+        List<String> terminalsList = new ArrayList<>(grammar.terminals());
 
-        int maxIterations = 100;
-        int iterations = 0;
-
-        while (nonTerminals.contains(current) && iterations < maxIterations) {
-            List<GrammarRule> applicable = rulesByFrom.getOrDefault(current, Collections.emptyList());
-
-            if (applicable.isEmpty()) {
-                break;
-            }
-
-            GrammarRule selected = applicable.get(random.nextInt(applicable.size()));
-            result.append(selected.terminal());
-            current = selected.to() != null ? selected.to() : "";
-            iterations++;
+        for (int i = 0; i < length; i++) {
+            result.append(terminalsList.get(random.nextInt(terminalsList.size())));
         }
 
         return result.toString();
-    }*/
+    }
 
 /*    public FiniteAutomaton toFiniteAutomaton() {
         Set<String> states = new HashSet<>(nonTerminals);

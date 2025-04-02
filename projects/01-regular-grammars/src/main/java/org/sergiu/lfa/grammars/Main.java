@@ -1,37 +1,20 @@
 package org.sergiu.lfa.grammars;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class Main {
 
-    public static final String RULES_FILE_PATH = "projects/01-regular-grammars/src/main/resources/rules.txt";
 
+    public static final String RULES_FILE_PATH = "projects/01-regular-grammars/src/main/resources/rules.txt";
     public static final String REGEX_PATTERN = "(?i)%s\\s*=\\s*\\{\\s*((?:[^{}]|[\\r\\n])*)\\s*}";
 
-    static Testing testing = new Testing();
+    static Runner runner = new Runner();
 
     public static void main(String[] args) {
-        try {
-
-            testing.test();
-
-            System.out.println("--- PARSED GRAMMAR ---");
-            // GrammarParser.printGrammar(grammar);
-
-            System.out.println("\n--- FINITE AUTOMATON ---");
-/*            fa.printTransitions();
-
-            testGeneratedStrings(grammar, fa);
-
-            testUserInput(fa, grammar.getTerminals());*/
-
-        } catch (IOException e) {
-            System.err.println("Error processing grammar file: " + e.getMessage());
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            e.printStackTrace();
-        }
+        runner.run();
     }
 
 /*    private static void testGeneratedStrings(Grammar grammar, FiniteAutomaton automaton) {
