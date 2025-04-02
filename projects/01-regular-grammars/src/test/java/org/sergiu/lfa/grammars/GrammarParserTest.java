@@ -63,4 +63,14 @@ public class GrammarParserTest {
         assertEquals(expectedGrammar.getTerminals(), actualGrammar.getTerminals());
     }
 
+    @Test
+    public void testRulesParse() {
+        assertEquals(expectedGrammar.getRules(), actualGrammar.getRules());
+    }
+
+    @Test
+    public void testGrammarParse() {
+        assertEquals(expected, actual);
+    }
+
 }

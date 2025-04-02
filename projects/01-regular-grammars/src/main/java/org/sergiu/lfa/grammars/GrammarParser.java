@@ -11,18 +11,19 @@ import static org.sergiu.lfa.grammars.Main.*;
 
 public class GrammarParser {
 
+    private static final Pattern NON_TERMINALS_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "V_N"), Pattern.DOTALL);
+    private static final Pattern TERMINALS_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "V_T"), Pattern.DOTALL);
+    private static final Pattern RULES_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "P"), Pattern.DOTALL);
+
     public Grammar parseFromFile(Path filePath) throws IOException {
         String content = Files.readString(filePath);
         return parseFromString(content);
     }
 
     public Grammar parseFromString(String content) {
-        Set<String> nonTerminals = new HashSet<>(extractElements(content, "V_N"));
-        Set<String> terminals = new HashSet<>(extractElements(content, "V_T"));
-
-        // Extract rules
-        Set<GrammarRule> rules = new HashSet<>(extractRules(content));
-        System.out.println(rules);
+        Set<String> nonTerminals = extractElements(content, NON_TERMINALS_PATTERN);
+        Set<String> terminals = extractElements(content, TERMINALS_PATTERN);
+        Set<GrammarRule> rules = extractRules(content);
 
         String startSymbol = nonTerminals.contains("S")? "S" : null;
         if (startSymbol == null) {
@@ -32,9 +33,7 @@ public class GrammarParser {
         return new Grammar(nonTerminals, terminals, startSymbol, rules);
     }
 
-    private Set<String> extractElements(String content, String label) {
-        String regexPatter = String.format(REGEX_PATTERN, label);
-        Pattern pattern = Pattern.compile(regexPatter, Pattern.DOTALL);
+    private Set<String> extractElements(String content, Pattern pattern) {
         Set<String> result = new LinkedHashSet<>();
         Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
@@ -50,7 +49,7 @@ public class GrammarParser {
     }
 
     private Set<GrammarRule> extractRules(String content) {
-        Set<String> elements = extractElements(content, "P");
+        Set<String> elements = extractElements(content, RULES_PATTERN);
         Set<GrammarRule> result = new LinkedHashSet<>();
 
         for (String element : elements) {
