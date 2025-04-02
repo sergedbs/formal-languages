@@ -13,14 +13,14 @@ public class GrammarProcessor {
     }
 
     public Set<String> getNonTerminals() {
-        return grammar.terminals();
+        return grammar.nonTerminals();
     }
 
     public Set<String> getTerminals() {
         return grammar.terminals();
     }
 
-    public List<GrammarRule> getRules() {
+    public Set<GrammarRule> getRules() {
         return grammar.rules();
     }
 

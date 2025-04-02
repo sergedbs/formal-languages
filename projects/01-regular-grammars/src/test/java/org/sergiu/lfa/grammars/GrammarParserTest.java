@@ -24,14 +24,14 @@ public class GrammarParserTest {
                 Set.of("S", "B", "D"),
                 Set.of("a", "b", "c", "d"),
                 "S",
-                List.of(
-                        new GrammarRule("S", List.of("a", "S")),
-                        new GrammarRule("S", List.of("b", "B")),
-                        new GrammarRule("B", List.of("c", "B")),
-                        new GrammarRule("B", List.of("d")),
-                        new GrammarRule("B", List.of("a", "D")),
-                        new GrammarRule("D", List.of("a", "B")),
-                        new GrammarRule("D", List.of("b"))
+                Set.of(
+                        new GrammarRule("S", Set.of("a", "S")),
+                        new GrammarRule("S", Set.of("b", "B")),
+                        new GrammarRule("B", Set.of("c", "B")),
+                        new GrammarRule("B", Set.of("d")),
+                        new GrammarRule("B", Set.of("a", "D")),
+                        new GrammarRule("D", Set.of("a", "B")),
+                        new GrammarRule("D", Set.of("b"))
                 )
         );
         expectedGrammar = new GrammarProcessor(expected);
@@ -55,6 +55,7 @@ public class GrammarParserTest {
     @Test
     public void testNonTerminalsParse() {
         assertEquals(expectedGrammar.getNonTerminals(), actualGrammar.getNonTerminals());
+
     }
 
     @Test

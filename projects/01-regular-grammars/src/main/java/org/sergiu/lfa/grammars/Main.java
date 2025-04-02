@@ -7,7 +7,7 @@ public class Main {
 
     public static final String RULES_FILE_PATH = "projects/01-regular-grammars/src/main/resources/rules.txt";
 
-    public static final String REGEX_PATTERN = "(?i)%s=\\s*\\{\\s*((?:[^{}]|[\\r\\n])*)\\s*}\n";
+    public static final String REGEX_PATTERN = "(?i)%s\\s*=\\s*\\{\\s*((?:[^{}]|[\\r\\n])*)\\s*}";
 
     static Testing testing = new Testing();
 
