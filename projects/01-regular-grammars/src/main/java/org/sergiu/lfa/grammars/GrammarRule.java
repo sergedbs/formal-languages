@@ -9,8 +9,8 @@ public record GrammarRule(String left, List<TokenRHS> right) {
         if (right.isEmpty()) {
             return left + " ----> ε";
         }
-        TokenRHS terminal = right.stream().filter(TokenRHS::isTerminal).findFirst().orElse(null);
-        TokenRHS nonTerminal = right.stream().filter(token -> !token.isTerminal()).findFirst().orElse(null);
+        TokenRHS terminal = right.stream().filter(token -> token.type() == SymbolType.TERMINAL).findFirst().orElse(null);
+        TokenRHS nonTerminal = right.stream().filter(token -> token.type() == SymbolType.NON_TERMINAL).findFirst().orElse(null);
         return "\n\t" + left + " --" + (terminal != null ? "(" + terminal.value() + ")" : "---") + "--> " + (nonTerminal != null ? nonTerminal.value() : "ε");
     }
 }

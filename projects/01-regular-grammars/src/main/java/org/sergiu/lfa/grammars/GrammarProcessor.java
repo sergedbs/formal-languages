@@ -5,11 +5,13 @@ import java.util.*;
 public class GrammarProcessor {
     private final Grammar grammar;
     private final Random random;
+    private final Map<String, List<List<TokenRHS>>> expansionCache;
 
     public GrammarProcessor(Grammar grammar) {
         Objects.requireNonNull(grammar, "The grammar cannot be null");
         this.grammar = grammar;
         this.random = new Random();
+        this.expansionCache = new HashMap<>();
     }
 
     public Set<String> getNonTerminals() {
@@ -30,10 +32,10 @@ public class GrammarProcessor {
     }
 
     private List<List<TokenRHS>> expand(String symbol) {
-        return grammar.rules().stream()
-                .filter(rule -> rule.left().equals(symbol))
+        return expansionCache.computeIfAbsent(symbol, s -> grammar.rules().stream()
+                .filter(rule -> rule.left().equals(s))
                 .map(GrammarRule::right)
-                .toList();
+                .toList());
     }
 
     private String generateFrom(String symbol) {
@@ -50,8 +52,8 @@ public class GrammarProcessor {
         List<TokenRHS> randomRHS = expansions.get(random.nextInt(expansions.size()));
 
         StringBuilder result = new StringBuilder();
-        for (TokenRHS s : randomRHS) {
-            result.append(generateFrom(String.valueOf(s)));
+        for (TokenRHS token : randomRHS) {
+            result.append(generateFrom(token.value()));
         }
 
         return result.toString();

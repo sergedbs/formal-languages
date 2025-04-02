@@ -53,14 +53,18 @@ public class GrammarParser {
         Set<String> elements = extractElements(content, RULES_PATTERN);
         Set<GrammarRule> result = new LinkedHashSet<>();
 
+        Map<String, SymbolType> symbolTypeMap = new HashMap<>();
+        terminals.forEach(t -> symbolTypeMap.put(t, SymbolType.TERMINAL));
+        nonTerminals.forEach(nt -> symbolTypeMap.put(nt, SymbolType.NON_TERMINAL));
+
         for (String element : elements) {
             String[] parts = element.split("->");
             if (parts.length == 2) {
                 String left = parts[0].trim();
                 String[] rightParts = parts[1].split("\\|");
                 for (String right : rightParts) {
-                    List<TokenRHS> rhsTokens = tokenizeRHS(right.trim(), terminals, nonTerminals);
-                    result.add(new GrammarRule(left, rhsTokens));
+                    List<TokenRHS> tokenRHS = tokenizeRHS(right.trim(), symbolTypeMap);
+                    result.add(new GrammarRule(left, tokenRHS));
                 }
             } else {
                 throw new IllegalArgumentException("Invalid rule format: " + element);
@@ -70,32 +74,18 @@ public class GrammarParser {
         return result;
     }
 
-    private List<TokenRHS> tokenizeRHS(String rhs, Set<String> terminals, Set<String> nonTerminals) {
-        List<String> vocabulary = Stream.concat(terminals.stream(), nonTerminals.stream())
-                .sorted((a, b) -> Integer.compare(b.length(), a.length()))
-                .toList();
-
+    private List<TokenRHS> tokenizeRHS(String rhs, Map<String, SymbolType> symbolTypeMap) {
         List<TokenRHS> tokens = new ArrayList<>();
-        int i = 0;
 
-        while (i < rhs.length()) {
-            boolean matched = false;
-
-            for (String symbol : vocabulary) {
-                if (rhs.startsWith(symbol, i)) {
-                    tokens.add(new TokenRHS(symbol, terminals.contains(symbol)));
-                    i += symbol.length();
-                    matched = true;
-                    break;
-                }
-            }
-
-            if (!matched) {
-                throw new IllegalArgumentException(
-                        "Unknown symbol in RHS at index " + i + ": '" + rhs.substring(i) + "'");
+        for (int i = 0; i < rhs.length(); i++) {
+            String s = String.valueOf(rhs.charAt(i));
+            SymbolType type = symbolTypeMap.get(s);
+            if (type != null) {
+                tokens.add(new TokenRHS(s, type));
+            } else {
+                throw new IllegalArgumentException("Unknown symbol in RHS at index " + i + ": '" + rhs.substring(i) + "'");
             }
         }
-
         return tokens;
     }
 }

@@ -25,13 +25,13 @@ public class GrammarParserTest {
                 Set.of("a", "b", "c", "d"),
                 "S",
                 Set.of(
-                        new GrammarRule("S", List.of("a", "S")),
-                        new GrammarRule("S", List.of("b", "B")),
-                        new GrammarRule("B", List.of("c", "B")),
-                        new GrammarRule("B", List.of("d")),
-                        new GrammarRule("B", List.of("a", "D")),
-                        new GrammarRule("D", List.of("a", "B")),
-                        new GrammarRule("D", List.of("b"))
+                        new GrammarRule("S", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("S", SymbolType.NON_TERMINAL))),
+                        new GrammarRule("S", List.of(new TokenRHS("b", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
+                        new GrammarRule("B", List.of(new TokenRHS("c", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
+                        new GrammarRule("B", List.of(new TokenRHS("d", SymbolType.TERMINAL))),
+                        new GrammarRule("B", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("D", SymbolType.NON_TERMINAL))),
+                        new GrammarRule("D", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
+                        new GrammarRule("D", List.of(new TokenRHS("b", SymbolType.TERMINAL)))
                 )
         );
         expectedGrammar = new GrammarProcessor(expected);

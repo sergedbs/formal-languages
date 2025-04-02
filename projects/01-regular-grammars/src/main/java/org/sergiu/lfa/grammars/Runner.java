@@ -7,9 +7,11 @@ import java.nio.file.Path;
 import static org.sergiu.lfa.grammars.Main.RULES_FILE_PATH;
 
 public class Runner {
-    GrammarParser grammarParser = new GrammarParser();
-    Grammar grammar;
-    GrammarProcessor grammarProcessor;
+    private final GrammarParser grammarParser;
+
+    public Runner() {
+        this.grammarParser = new GrammarParser();
+    }
 
     public void run() {
         try {
@@ -17,8 +19,8 @@ public class Runner {
             if (!Files.exists(path)) {
                 throw new IOException("No grammar found at: " + path);
             }
-            grammar = grammarParser.parseFromFile(path);
-            grammarProcessor = new GrammarProcessor(grammar);
+            Grammar grammar = grammarParser.parseFromFile(path);
+            GrammarProcessor grammarProcessor = new GrammarProcessor(grammar);
 
             System.out.println("--- PARSED GRAMMAR ---");
             System.out.println(grammar.toString());
