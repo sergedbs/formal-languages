@@ -200,10 +200,15 @@ public class GrammarParser {
             return List.of();
         }
 
-        List<ProductionSymbol> tokens = new ArrayList<>(rhs.length());
+        String noSpaces = rhs.replaceAll("\\s+", "");
+        if (noSpaces.isEmpty()) {
+            return List.of();
+        }
 
-        for (int i = 0; i < rhs.length(); i++) {
-            String s = String.valueOf(rhs.charAt(i));
+        List<ProductionSymbol> tokens = new ArrayList<>(noSpaces.length());
+
+        for (int i = 0; i < noSpaces.length(); i++) {
+            String s = String.valueOf(noSpaces.charAt(i));
             SymbolType type = symbolTypeMap.get(s);
 
             if (type == null) {

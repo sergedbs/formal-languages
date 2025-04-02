@@ -45,8 +45,7 @@ public class GrammarParserTest {
         String input = """
                 V_N={S, B, D}
                 V_T={a, b, c, d}
-                P={ S -> aS,
-                    S -> bB,
+                P={ S -> aS | bB,
                     B -> cB,
                     B -> d,
                     B -> aD,
