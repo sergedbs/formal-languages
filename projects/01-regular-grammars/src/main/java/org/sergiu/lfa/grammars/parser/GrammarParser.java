@@ -37,6 +37,7 @@ public class GrammarParser {
     private static final Pattern TERMINALS_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "V_T"), Pattern.DOTALL);
     private static final Pattern RULES_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "P"), Pattern.DOTALL);
     private static final String START_SYMBOL = "S";
+    private static final String EPSILON = "ε";
 
     /**
      * Parses a grammar definition from a file.
@@ -47,6 +48,10 @@ public class GrammarParser {
      * @throws IllegalArgumentException If the grammar definition is invalid
      */
     public Grammar parseFromFile(Path filePath) throws IOException {
+        if (!Files.exists(filePath)) {
+            throw new IOException("Grammar file does not exist: " + filePath);
+        }
+
         String content = Files.readString(filePath);
         return parseFromString(content);
     }
@@ -59,15 +64,52 @@ public class GrammarParser {
      * @throws IllegalArgumentException If the grammar definition is invalid
      */
     public Grammar parseFromString(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("Grammar content cannot be empty");
+        }
+
         Set<String> nonTerminals = extractElements(content, NON_TERMINALS_PATTERN);
+        if (nonTerminals.isEmpty()) {
+            throw new IllegalArgumentException("No non-terminal symbols found in the grammar");
+        }
+
         Set<String> terminals = extractElements(content, TERMINALS_PATTERN);
-        Set<Production> rules = extractRules(content, terminals, nonTerminals);
+        if (terminals.isEmpty()) {
+            throw new IllegalArgumentException("No terminal symbols found in the grammar");
+        }
+
+        Set<String> intersection = new HashSet<>(nonTerminals);
+        intersection.retainAll(terminals);
+        if (!intersection.isEmpty()) {
+            throw new IllegalArgumentException("Symbols cannot be both terminal and non-terminal: " + intersection);
+        }
 
         if (!nonTerminals.contains(START_SYMBOL)) {
             throw new IllegalArgumentException("Start symbol '" + START_SYMBOL + "' is not defined in the non-terminals set");
         }
 
+        Map<String, SymbolType> symbolTypeMap = buildSymbolTypeMap(terminals, nonTerminals);
+
+        Set<Production> rules = extractRules(content, symbolTypeMap);
+        if (rules.isEmpty()) {
+            throw new IllegalArgumentException("No production rules found in the grammar");
+        }
+
         return new Grammar(nonTerminals, terminals, START_SYMBOL, rules);
+    }
+
+    /**
+     * Builds a mapping from symbol values to their types.
+     *
+     * @param terminals Set of terminal symbols
+     * @param nonTerminals Set of non-terminal symbols
+     * @return Map of symbol values to their types
+     */
+    private Map<String, SymbolType> buildSymbolTypeMap(Set<String> terminals, Set<String> nonTerminals) {
+        Map<String, SymbolType> symbolTypeMap = new HashMap<>(terminals.size() + nonTerminals.size());
+        terminals.forEach(t -> symbolTypeMap.put(t, SymbolType.TERMINAL));
+        nonTerminals.forEach(nt -> symbolTypeMap.put(nt, SymbolType.NON_TERMINAL));
+        return symbolTypeMap;
     }
 
     /**
@@ -96,34 +138,53 @@ public class GrammarParser {
      * Extracts and parses production rules from the grammar definition.
      *
      * @param content The full grammar definition text
-     * @param terminals Set of terminal symbols for type checking
-     * @param nonTerminals Set of non-terminal symbols for type checking
+     * @param symbolTypeMap Map of symbols to their types for classification
      * @return A set of structured {@link Production} objects
      * @throws IllegalArgumentException If a rule has invalid format or contains undefined symbols
      */
-    private Set<Production> extractRules(String content, Set<String> terminals, Set<String> nonTerminals) {
+    private Set<Production> extractRules(String content, Map<String, SymbolType> symbolTypeMap) {
         Set<String> elements = extractElements(content, RULES_PATTERN);
+        if (elements.isEmpty()) {
+            return Set.of();
+        }
+
         Set<Production> result = new LinkedHashSet<>();
 
-        Map<String, SymbolType> symbolTypeMap = new HashMap<>();
-        terminals.forEach(t -> symbolTypeMap.put(t, SymbolType.TERMINAL));
-        nonTerminals.forEach(nt -> symbolTypeMap.put(nt, SymbolType.NON_TERMINAL));
-
         for (String element : elements) {
+            element = element.trim();
+            if (element.isEmpty()) continue;
+
             String[] parts = element.split("->");
-            if (parts.length == 2) {
-                String left = parts[0].trim();
-                String[] rightParts = parts[1].split("\\|");
-                for (String right : rightParts) {
-                    List<ProductionSymbol> tokenRHS = tokenizeRHS(right.trim(), symbolTypeMap);
-                    result.add(new Production(left, tokenRHS));
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid rule format: " + element);
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Invalid rule format (check for missing ->): " + element);
+            }
+
+            String left = parts[0].trim();
+            if (!symbolTypeMap.containsKey(left)) {
+                throw new IllegalArgumentException("Left-hand side must be a non-terminal: " + left);
+            }
+
+            String rightSide = parts[1].trim();
+            for (String right : rightSide.split("\\|")) {
+                parseRightSide(left, right.trim(), symbolTypeMap, result);
             }
         }
 
         return result;
+    }
+
+    private void parseRightSide(String left, String right, Map<String, SymbolType> symbolTypeMap, Set<Production> result) {
+        if (right.isEmpty()) {
+            return;
+        }
+
+        if (right.equals(EPSILON)) {
+            result.add(new Production(left, List.of()));
+            return;
+        }
+
+        List<ProductionSymbol> tokenRHS = tokenizeRHS(right, symbolTypeMap);
+        result.add(new Production(left, tokenRHS));
     }
 
     /**
@@ -135,17 +196,25 @@ public class GrammarParser {
      * @throws IllegalArgumentException If an undefined symbol is encountered
      */
     private List<ProductionSymbol> tokenizeRHS(String rhs, Map<String, SymbolType> symbolTypeMap) {
-        List<ProductionSymbol> tokens = new ArrayList<>();
+        if (rhs.isEmpty()) {
+            return List.of();
+        }
+
+        List<ProductionSymbol> tokens = new ArrayList<>(rhs.length());
 
         for (int i = 0; i < rhs.length(); i++) {
             String s = String.valueOf(rhs.charAt(i));
             SymbolType type = symbolTypeMap.get(s);
-            if (type != null) {
-                tokens.add(new ProductionSymbol(s, type));
-            } else {
-                throw new IllegalArgumentException("Unknown symbol in RHS at index " + i + ": '" + rhs.substring(i) + "'");
+
+            if (type == null) {
+                throw new IllegalArgumentException(
+                        "Unknown symbol in production at position " + i + ": '" + s + "' in '" + rhs + "'"
+                );
             }
+
+            tokens.add(new ProductionSymbol(s, type));
         }
+
         return tokens;
     }
 }

@@ -1,10 +1,7 @@
 V_N={S, B, D}
 V_T={a, b, c, d}
-P={ S -> aS,
-    S -> bB,
-    B -> cB,
-    B -> d,
-    B -> aD,
+P={ S -> aS | bB,
+    B -> cB | d | aD,
     D -> aB,
     D -> b
 }
