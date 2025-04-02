@@ -9,8 +9,8 @@ import static org.sergiu.lfa.grammars.Main.RULES_FILE_PATH;
 public class Runner {
     private final GrammarParser grammarParser;
 
-    public Runner() {
-        this.grammarParser = new GrammarParser();
+    public Runner(GrammarParser grammarParser) {
+        this.grammarParser = grammarParser;
     }
 
     public void run() {
