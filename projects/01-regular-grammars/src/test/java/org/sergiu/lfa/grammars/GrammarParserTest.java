@@ -3,8 +3,11 @@ package org.sergiu.lfa.grammars;
 import org.junit.Before;
 import org.junit.Test;
 import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.GrammarRule;
-import org.sergiu.lfa.grammars.model.TokenRHS;
+import org.sergiu.lfa.grammars.model.Production;
+import org.sergiu.lfa.grammars.model.ProductionSymbol;
+import org.sergiu.lfa.grammars.model.SymbolType;
+import org.sergiu.lfa.grammars.parser.GrammarParser;
+import org.sergiu.lfa.grammars.processor.GrammarProcessor;
 
 import java.util.List;
 import java.util.Set;
@@ -28,13 +31,13 @@ public class GrammarParserTest {
                 Set.of("a", "b", "c", "d"),
                 "S",
                 Set.of(
-                        new GrammarRule("S", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("S", SymbolType.NON_TERMINAL))),
-                        new GrammarRule("S", List.of(new TokenRHS("b", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
-                        new GrammarRule("B", List.of(new TokenRHS("c", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
-                        new GrammarRule("B", List.of(new TokenRHS("d", SymbolType.TERMINAL))),
-                        new GrammarRule("B", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("D", SymbolType.NON_TERMINAL))),
-                        new GrammarRule("D", List.of(new TokenRHS("a", SymbolType.TERMINAL), new TokenRHS("B", SymbolType.NON_TERMINAL))),
-                        new GrammarRule("D", List.of(new TokenRHS("b", SymbolType.TERMINAL)))
+                        new Production("S", List.of(new ProductionSymbol("a", SymbolType.TERMINAL), new ProductionSymbol("S", SymbolType.NON_TERMINAL))),
+                        new Production("S", List.of(new ProductionSymbol("b", SymbolType.TERMINAL), new ProductionSymbol("B", SymbolType.NON_TERMINAL))),
+                        new Production("B", List.of(new ProductionSymbol("c", SymbolType.TERMINAL), new ProductionSymbol("B", SymbolType.NON_TERMINAL))),
+                        new Production("B", List.of(new ProductionSymbol("d", SymbolType.TERMINAL))),
+                        new Production("B", List.of(new ProductionSymbol("a", SymbolType.TERMINAL), new ProductionSymbol("D", SymbolType.NON_TERMINAL))),
+                        new Production("D", List.of(new ProductionSymbol("a", SymbolType.TERMINAL), new ProductionSymbol("B", SymbolType.NON_TERMINAL))),
+                        new Production("D", List.of(new ProductionSymbol("b", SymbolType.TERMINAL)))
                 )
         );
         expectedGrammar = new GrammarProcessor(expected);

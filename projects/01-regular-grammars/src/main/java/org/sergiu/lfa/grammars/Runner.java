@@ -1,6 +1,8 @@
 package org.sergiu.lfa.grammars;
 
 import org.sergiu.lfa.grammars.model.Grammar;
+import org.sergiu.lfa.grammars.parser.GrammarParser;
+import org.sergiu.lfa.grammars.processor.GrammarProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;

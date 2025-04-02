@@ -1,15 +1,15 @@
-package org.sergiu.lfa.grammars;
+package org.sergiu.lfa.grammars.processor;
 
 import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.GrammarRule;
-import org.sergiu.lfa.grammars.model.TokenRHS;
+import org.sergiu.lfa.grammars.model.Production;
+import org.sergiu.lfa.grammars.model.ProductionSymbol;
 
 import java.util.*;
 
 public class GrammarProcessor {
     private final Grammar grammar;
     private final Random random;
-    private final Map<String, List<List<TokenRHS>>> expansionCache;
+    private final Map<String, List<List<ProductionSymbol>>> expansionCache;
 
     public GrammarProcessor(Grammar grammar) {
         Objects.requireNonNull(grammar, "The grammar cannot be null");
@@ -26,7 +26,7 @@ public class GrammarProcessor {
         return grammar.terminals();
     }
 
-    public Set<GrammarRule> getRules() {
+    public Set<Production> getRules() {
         return grammar.rules();
     }
 
@@ -35,10 +35,10 @@ public class GrammarProcessor {
         return generateFrom(symbol);
     }
 
-    private List<List<TokenRHS>> expand(String symbol) {
+    private List<List<ProductionSymbol>> expand(String symbol) {
         return expansionCache.computeIfAbsent(symbol, s -> grammar.rules().stream()
                 .filter(rule -> rule.left().equals(s))
-                .map(GrammarRule::right)
+                .map(Production::right)
                 .toList());
     }
 
@@ -47,16 +47,16 @@ public class GrammarProcessor {
             return symbol;
         }
 
-        List<List<TokenRHS>> expansions = expand(symbol);
+        List<List<ProductionSymbol>> expansions = expand(symbol);
 
         if (expansions.isEmpty()) {
             throw new IllegalStateException("No expansions found for symbol: " + symbol);
         }
 
-        List<TokenRHS> randomRHS = expansions.get(random.nextInt(expansions.size()));
+        List<ProductionSymbol> randomRHS = expansions.get(random.nextInt(expansions.size()));
 
         StringBuilder result = new StringBuilder();
-        for (TokenRHS token : randomRHS) {
+        for (ProductionSymbol token : randomRHS) {
             result.append(generateFrom(token.value()));
         }
 

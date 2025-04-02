@@ -1,4 +1,4 @@
-package org.sergiu.lfa.grammars;
+package org.sergiu.lfa.grammars.model;
 
 /**
  * Represents the type of grammar symbol.

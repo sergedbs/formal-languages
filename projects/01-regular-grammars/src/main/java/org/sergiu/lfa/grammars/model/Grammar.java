@@ -17,7 +17,7 @@ public record Grammar(
         Set<String> nonTerminals,
         Set<String> terminals,
         String startSymbol,
-        Set<GrammarRule> rules
+        Set<Production> rules
 ) {
     @Override
     public String toString() {

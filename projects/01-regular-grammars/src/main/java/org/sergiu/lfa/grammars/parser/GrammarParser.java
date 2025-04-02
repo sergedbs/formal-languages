@@ -1,8 +1,9 @@
-package org.sergiu.lfa.grammars;
+package org.sergiu.lfa.grammars.parser;
 
+import org.sergiu.lfa.grammars.model.SymbolType;
 import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.GrammarRule;
-import org.sergiu.lfa.grammars.model.TokenRHS;
+import org.sergiu.lfa.grammars.model.Production;
+import org.sergiu.lfa.grammars.model.ProductionSymbol;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +29,7 @@ public class GrammarParser {
     public Grammar parseFromString(String content) {
         Set<String> nonTerminals = extractElements(content, NON_TERMINALS_PATTERN);
         Set<String> terminals = extractElements(content, TERMINALS_PATTERN);
-        Set<GrammarRule> rules = extractRules(content, terminals, nonTerminals);
+        Set<Production> rules = extractRules(content, terminals, nonTerminals);
 
         if (!nonTerminals.contains(START_SYMBOL)) {
             throw new IllegalArgumentException("Start symbol '" + START_SYMBOL + "' is not defined in the non-terminals set");
@@ -52,9 +53,9 @@ public class GrammarParser {
         return result;
     }
 
-    private Set<GrammarRule> extractRules(String content, Set<String> terminals, Set<String> nonTerminals) {
+    private Set<Production> extractRules(String content, Set<String> terminals, Set<String> nonTerminals) {
         Set<String> elements = extractElements(content, RULES_PATTERN);
-        Set<GrammarRule> result = new LinkedHashSet<>();
+        Set<Production> result = new LinkedHashSet<>();
 
         Map<String, SymbolType> symbolTypeMap = new HashMap<>();
         terminals.forEach(t -> symbolTypeMap.put(t, SymbolType.TERMINAL));
@@ -66,8 +67,8 @@ public class GrammarParser {
                 String left = parts[0].trim();
                 String[] rightParts = parts[1].split("\\|");
                 for (String right : rightParts) {
-                    List<TokenRHS> tokenRHS = tokenizeRHS(right.trim(), symbolTypeMap);
-                    result.add(new GrammarRule(left, tokenRHS));
+                    List<ProductionSymbol> tokenRHS = tokenizeRHS(right.trim(), symbolTypeMap);
+                    result.add(new Production(left, tokenRHS));
                 }
             } else {
                 throw new IllegalArgumentException("Invalid rule format: " + element);
@@ -77,14 +78,14 @@ public class GrammarParser {
         return result;
     }
 
-    private List<TokenRHS> tokenizeRHS(String rhs, Map<String, SymbolType> symbolTypeMap) {
-        List<TokenRHS> tokens = new ArrayList<>();
+    private List<ProductionSymbol> tokenizeRHS(String rhs, Map<String, SymbolType> symbolTypeMap) {
+        List<ProductionSymbol> tokens = new ArrayList<>();
 
         for (int i = 0; i < rhs.length(); i++) {
             String s = String.valueOf(rhs.charAt(i));
             SymbolType type = symbolTypeMap.get(s);
             if (type != null) {
-                tokens.add(new TokenRHS(s, type));
+                tokens.add(new ProductionSymbol(s, type));
             } else {
                 throw new IllegalArgumentException("Unknown symbol in RHS at index " + i + ": '" + rhs.substring(i) + "'");
             }

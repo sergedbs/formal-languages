@@ -1,5 +1,7 @@
 package org.sergiu.lfa.grammars;
 
+import org.sergiu.lfa.grammars.parser.GrammarParser;
+
 /**
  * Main application entry point for the Regular Grammar Processor.
  * Responsible for bootstrapping the application components and starting the execution.
