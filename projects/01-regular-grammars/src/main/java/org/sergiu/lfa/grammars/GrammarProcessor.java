@@ -1,6 +1,7 @@
 package org.sergiu.lfa.grammars;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GrammarProcessor {
     private final Grammar grammar;
@@ -24,18 +25,34 @@ public class GrammarProcessor {
         return grammar.rules();
     }
 
-    public String getStartSymbol() {
-        return grammar.startSymbol();
+    public String generateString() {
+        String symbol = grammar.startSymbol();
+        return generateFrom(symbol);
     }
 
-    public String generateString() {
+    private List<List<TokenRHS>> expand(String symbol) {
+        return grammar.rules().stream()
+                .filter(rule -> rule.left().equals(symbol))
+                .map(GrammarRule::right)
+                .toList();
+    }
+
+    private String generateFrom(String symbol) {
+        if (grammar.terminals().contains(symbol)) {
+            return symbol;
+        }
+
+        List<List<TokenRHS>> expansions = expand(symbol);
+
+        if (expansions.isEmpty()) {
+            throw new IllegalStateException("No expansions found for symbol: " + symbol);
+        }
+
+        List<TokenRHS> randomRHS = expansions.get(random.nextInt(expansions.size()));
 
         StringBuilder result = new StringBuilder();
-        int length = random.nextInt(1, 10);
-        List<String> terminalsList = new ArrayList<>(grammar.terminals());
-
-        for (int i = 0; i < length; i++) {
-            result.append(terminalsList.get(random.nextInt(terminalsList.size())));
+        for (TokenRHS s : randomRHS) {
+            result.append(generateFrom(String.valueOf(s)));
         }
 
         return result.toString();

@@ -29,7 +29,7 @@ public class Runner {
                 System.out.println(test);
             }
 
-            System.out.println("\n--- FINITE AUTOMATON ---");
+            // System.out.println("\n--- FINITE AUTOMATON ---");
 
         } catch (IOException e) {
             System.err.println("Error processing grammar file: " + e.getMessage());

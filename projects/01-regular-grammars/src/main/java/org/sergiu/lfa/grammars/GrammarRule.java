@@ -1,13 +1,21 @@
 package org.sergiu.lfa.grammars;
 
 import java.util.List;
-import java.util.Set;
 
-public record GrammarRule(String left, Set<String> right) {
+public record GrammarRule(String left, List<TokenRHS> right) {
 
     @Override
     public String toString() {
-        return left + " -> " + (right.isEmpty() ? "ε" : String.join(" ", right));
+        StringBuilder sb = new StringBuilder();
+        sb.append(left).append(" --> ");
+        if (right.isEmpty()) {
+            sb.append("ε");
+        } else {
+            for (TokenRHS token : right) {
+                sb.append(token).append(" ");
+            }
+        }
+        return sb.toString().trim();
     }
 
 }

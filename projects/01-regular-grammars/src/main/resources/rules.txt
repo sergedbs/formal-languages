@@ -6,5 +6,5 @@ P={ S -> aS,
     B -> d,
     B -> aD,
     D -> aB,
-    D -> b
+    D -> b | B
 }
