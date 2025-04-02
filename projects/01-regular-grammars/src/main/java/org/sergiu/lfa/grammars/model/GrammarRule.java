@@ -1,4 +1,6 @@
-package org.sergiu.lfa.grammars;
+package org.sergiu.lfa.grammars.model;
+
+import org.sergiu.lfa.grammars.SymbolType;
 
 import java.util.List;
 

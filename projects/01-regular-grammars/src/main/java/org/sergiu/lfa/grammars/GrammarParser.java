@@ -1,12 +1,15 @@
 package org.sergiu.lfa.grammars;
 
+import org.sergiu.lfa.grammars.model.Grammar;
+import org.sergiu.lfa.grammars.model.GrammarRule;
+import org.sergiu.lfa.grammars.model.TokenRHS;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import static org.sergiu.lfa.grammars.Main.*;
 

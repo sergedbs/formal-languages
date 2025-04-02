@@ -2,6 +2,9 @@ package org.sergiu.lfa.grammars;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sergiu.lfa.grammars.model.Grammar;
+import org.sergiu.lfa.grammars.model.GrammarRule;
+import org.sergiu.lfa.grammars.model.TokenRHS;
 
 import java.util.List;
 import java.util.Set;

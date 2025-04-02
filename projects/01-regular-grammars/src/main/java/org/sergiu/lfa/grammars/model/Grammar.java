@@ -1,4 +1,4 @@
-package org.sergiu.lfa.grammars;
+package org.sergiu.lfa.grammars.model;
 
 import java.util.Set;
 

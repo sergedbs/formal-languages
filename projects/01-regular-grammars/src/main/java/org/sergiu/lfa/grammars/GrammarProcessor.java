@@ -1,5 +1,9 @@
 package org.sergiu.lfa.grammars;
 
+import org.sergiu.lfa.grammars.model.Grammar;
+import org.sergiu.lfa.grammars.model.GrammarRule;
+import org.sergiu.lfa.grammars.model.TokenRHS;
+
 import java.util.*;
 
 public class GrammarProcessor {
