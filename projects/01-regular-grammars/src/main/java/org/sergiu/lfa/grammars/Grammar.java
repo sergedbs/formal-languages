@@ -1,6 +1,5 @@
 package org.sergiu.lfa.grammars;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public record Grammar(
@@ -11,7 +10,7 @@ public record Grammar(
 ) {
     @Override
     public String toString() {
-        return "Non terminals: " + nonTerminals +
+        return "Non-terminals: " + nonTerminals +
                 "\nTerminals: " + terminals +
                 "\nStart symbol: " + startSymbol +
                 "\nRules: " + rules;

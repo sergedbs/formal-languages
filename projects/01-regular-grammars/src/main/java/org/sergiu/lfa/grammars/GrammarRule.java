@@ -6,17 +6,11 @@ public record GrammarRule(String left, List<TokenRHS> right) {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(left).append(" --> ");
         if (right.isEmpty()) {
-            sb.append("ε");
-        } else {
-            for (TokenRHS token : right) {
-                sb.append(token).append(" ");
-            }
+            return left + " ----> ε";
         }
-        return sb.toString().trim();
+        TokenRHS terminal = right.stream().filter(TokenRHS::isTerminal).findFirst().orElse(null);
+        TokenRHS nonTerminal = right.stream().filter(token -> !token.isTerminal()).findFirst().orElse(null);
+        return "\n\t" + left + " --" + (terminal != null ? "(" + terminal.value() + ")" : "---") + "--> " + (nonTerminal != null ? nonTerminal.value() : "ε");
     }
-
 }
-
