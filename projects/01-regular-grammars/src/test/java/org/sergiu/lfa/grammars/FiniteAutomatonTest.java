@@ -50,7 +50,8 @@ public class FiniteAutomatonTest {
         assert finiteAutomaton.getStartState().equals(grammar.startSymbol());
 
         // Check if the final states are correctly identified
-        assert finiteAutomaton.getFinalStates().containsAll(List.of("B", "D"));
+        System.out.println(finiteAutomaton.getFinalStates());
+        assert finiteAutomaton.getFinalStates().containsAll(List.of("B_final", "D_final"));
     }
 
     @Test
@@ -69,7 +70,7 @@ public class FiniteAutomatonTest {
         grammarProcessor = new GrammarProcessor(grammar);
         finiteAutomaton = new FiniteAutomaton(grammar);
 
-        int count = 5;
+        int count = 10;
 
         // Generate test strings
         List<String> generatedStrings = new ArrayList<>(count);

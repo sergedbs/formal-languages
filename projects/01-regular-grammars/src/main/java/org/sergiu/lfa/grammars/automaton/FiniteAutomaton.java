@@ -61,12 +61,18 @@ public class FiniteAutomaton {
 
                 if (terminal != null) {
                     String terminalValue = terminal.value();
-                    String nextState = (nonTerminal != null) ? nonTerminal.value() : left;
+                    String nextState = (nonTerminal != null) ? nonTerminal.value() : null;
 
-                    transitions.get(left).put(terminalValue, nextState);
-
-                    if (nonTerminal == null) {
-                        finalStates.add(left);
+                    if (nextState != null) {
+                        // Regular transition: A -> aB
+                        transitions.get(left).put(terminalValue, nextState);
+                    } else {
+                        // Terminal-only production: A -> a
+                        // Create special final state for this production
+                        String finalState = left + "_final";
+                        states.add(finalState);
+                        finalStates.add(finalState);
+                        transitions.get(left).put(terminalValue, finalState);
                     }
                 }
             }
