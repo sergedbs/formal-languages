@@ -51,9 +51,6 @@ public class Runner {
             // Print transitions
             automaton.printTransitions();
 
-            // Check if the automaton is deterministic
-            System.out.println("\nIs Deterministic: " + automaton.isDeterministic());
-
             // Test all stored strings with the automaton
             testAllGeneratedStrings();
 

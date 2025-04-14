@@ -9,20 +9,22 @@ import java.util.*;
 
 /**
  * Represents a finite automaton constructed from a grammar.
- * This class provides functionality to:
- * <ul>
- *   <li>Check if strings are accepted by the automaton</li>
- *   <li>Generate strings accepted by the automaton</li>
- *   <li>Analyze automaton properties</li>
- *   <li>Visualize the automaton structure</li>
- * </ul>
+ * This class implements the formal definition of a finite automaton as a 5-tuple:
+ * (Q, Σ, δ, q0, F) where:
+ * - Q: set of states
+ * - Σ: alphabet (set of input symbols)
+ * - δ: transition function δ: Q × Σ → Q
+ * - q0: initial state
+ * - F: set of final/accepting states
  */
 public class FiniteAutomaton {
-    private final Set<String> states;
-    private final Set<String> alphabet;
-    private final Map<String, Map<String, String>> transitions;
-    private final String startState;
-    private final Set<String> finalStates;
+    private final Set<String> Q;
+    private final Set<String> Sigma;
+    private final Map<String, Map<String, String>> delta;
+    private final String q0;
+    private final Set<String> F;
+    
+    private static final String FINAL_STATE_SUFFIX = "_final";
 
     /**
      * Constructs a finite automaton from the given grammar.
@@ -30,52 +32,75 @@ public class FiniteAutomaton {
      * @param grammar The grammar to construct the automaton from
      */
     public FiniteAutomaton(Grammar grammar) {
-        this.states = new HashSet<>(grammar.nonTerminals());
-        this.alphabet = new HashSet<>(grammar.terminals());
-        this.transitions = new HashMap<>();
-        this.startState = grammar.startSymbol();
-        this.finalStates = new HashSet<>();
+        Objects.requireNonNull(grammar, "Grammar cannot be null");
 
-        // Build transitions and final states
-        for (Production production : grammar.rules()) {
+        this.Q = new HashSet<>(grammar.nonTerminals());
+        this.Sigma = new HashSet<>(grammar.terminals());
+        this.delta = new HashMap<>();
+        this.q0 = grammar.startSymbol();
+        this.F = new HashSet<>();
+
+        initializeTransitionMap(grammar.nonTerminals());
+        buildAutomaton(grammar.rules());
+    }
+
+    /**
+     * Initialize the transition map with empty maps for each non-terminal.
+     *
+     * @param nonTerminals Set of non-terminal symbols
+     */
+    private void initializeTransitionMap(Set<String> nonTerminals) {
+        nonTerminals.forEach(state -> delta.put(state, new HashMap<>()));
+    }
+
+    /**
+     * Builds the automaton structure from the grammar productions.
+     *
+     * @param productions Set of productions from the grammar
+     */
+    private void buildAutomaton(Set<Production> productions) {
+        for (Production production : productions) {
             String left = production.left();
             List<ProductionSymbol> right = production.right();
 
-            if (!transitions.containsKey(left)) {
-                transitions.put(left, new HashMap<>());
-            }
-
             if (right.isEmpty()) {
-                // Epsilon production
-                finalStates.add(left);
-            } else {
-                ProductionSymbol terminal = right.stream()
-                        .filter(symbol -> symbol.type() == SymbolType.TERMINAL)
-                        .findFirst()
-                        .orElse(null);
-
-                ProductionSymbol nonTerminal = right.stream()
-                        .filter(symbol -> symbol.type() == SymbolType.NON_TERMINAL)
-                        .findFirst()
-                        .orElse(null);
-
-                if (terminal != null) {
-                    String terminalValue = terminal.value();
-                    String nextState = (nonTerminal != null) ? nonTerminal.value() : null;
-
-                    if (nextState != null) {
-                        // Regular transition: A -> aB
-                        transitions.get(left).put(terminalValue, nextState);
-                    } else {
-                        // Terminal-only production: A -> a
-                        // Create special final state for this production
-                        String finalState = left + "_final";
-                        states.add(finalState);
-                        finalStates.add(finalState);
-                        transitions.get(left).put(terminalValue, finalState);
-                    }
-                }
+                // Handle epsilon production
+                F.add(left);
+                continue;
             }
+
+            // Find terminal and non-terminal in the production
+            Optional<ProductionSymbol> terminalOpt = right.stream()
+                    .filter(symbol -> symbol.type() == SymbolType.TERMINAL)
+                    .findFirst();
+
+            Optional<ProductionSymbol> nonTerminalOpt = right.stream()
+                    .filter(symbol -> symbol.type() == SymbolType.NON_TERMINAL)
+                    .findFirst();
+
+            // Process only if we have a terminal symbol
+            terminalOpt.ifPresent(terminal ->
+                processProduction(left, terminal.value(), nonTerminalOpt.orElse(null)));
+        }
+    }
+
+    /**
+     * Process a single production to create appropriate transitions.
+     *
+     * @param sourceState The source state (left-hand side)
+     * @param terminalValue The terminal symbol value
+     * @param nonTerminal The optional non-terminal symbol
+     */
+    private void processProduction(String sourceState, String terminalValue, ProductionSymbol nonTerminal) {
+        if (nonTerminal != null) {
+            // Regular transition: A -> aB
+            delta.get(sourceState).put(terminalValue, nonTerminal.value());
+        } else {
+            // Terminal-only production: A -> a
+            String finalState = sourceState + FINAL_STATE_SUFFIX;
+            Q.add(finalState);
+            F.add(finalState);
+            delta.get(sourceState).put(terminalValue, finalState);
         }
     }
 
@@ -86,70 +111,59 @@ public class FiniteAutomaton {
      * @return True if the string is accepted, false otherwise
      */
     public boolean accepts(String input) {
-        String currentState = startState;
-
-        for (char symbol : input.toCharArray()) {
-            String symbolStr = String.valueOf(symbol);
-
-            if (!alphabet.contains(symbolStr)) {
-                return false; // Invalid symbol
-            }
-
-            Map<String, String> stateTransitions = transitions.get(currentState);
-            if (stateTransitions == null || !stateTransitions.containsKey(symbolStr)) {
-                return false; // No valid transition
-            }
-
-            currentState = stateTransitions.get(symbolStr);
+        if (input == null) {
+            return false;
         }
 
-        return finalStates.contains(currentState);
+        String currentState = q0;
+
+        for (char c : input.toCharArray()) {
+            String symbol = String.valueOf(c);
+
+            // Reject if symbol not in alphabet
+            if (!Sigma.contains(symbol)) {
+                return false;
+            }
+
+            // Get transitions for current state
+            Map<String, String> stateTransitions = delta.get(currentState);
+
+            // No transitions or no transition for this symbol
+            if (stateTransitions == null || !stateTransitions.containsKey(symbol)) {
+                return false;
+            }
+
+            // Move to next state
+            currentState = stateTransitions.get(symbol);
+        }
+
+        // Accept if we end in a final state
+        return F.contains(currentState);
     }
 
     /**
-     * Prints the state transitions of the automaton.
+     * Prints the state transitions of the automaton in a readable format.
      */
     public void printTransitions() {
         System.out.println("State Transitions:");
-        for (String state : transitions.keySet()) {
-            Map<String, String> stateTransitions = transitions.get(state);
-            for (String symbol : stateTransitions.keySet()) {
-                System.out.printf("  %s --%s--> %s%n", state, symbol, stateTransitions.get(symbol));
+
+        // Sort states for consistent output
+        List<String> sortedStates = new ArrayList<>(delta.keySet());
+        Collections.sort(sortedStates);
+
+        for (String state : sortedStates) {
+            Map<String, String> stateTransitions = delta.get(state);
+
+            // Sort symbols for consistent output
+            List<String> symbols = new ArrayList<>(stateTransitions.keySet());
+            Collections.sort(symbols);
+
+            for (String symbol : symbols) {
+                System.out.printf("  δ(%s,%s) = %s%n", state, symbol, stateTransitions.get(symbol));
             }
         }
-        System.out.println("Final states: " + finalStates);
-    }
 
-    /**
-     * Checks if the automaton is useful (has a path from start to a final state).
-     *
-     * @return True if the automaton is useful, false otherwise
-     */
-    public boolean isUseful() {
-        Set<String> reachableStates = new HashSet<>();
-        findReachableStates(startState, reachableStates);
-
-        // Check if any reachable state is a final state
-        return reachableStates.stream().anyMatch(finalStates::contains);
-    }
-
-    /**
-     * Recursively finds all states reachable from the given state.
-     *
-     * @param state The current state
-     * @param reachableStates The set of reachable states to populate
-     */
-    private void findReachableStates(String state, Set<String> reachableStates) {
-        if (reachableStates.contains(state)) {
-            return; // Already visited
-        }
-
-        reachableStates.add(state);
-
-        Map<String, String> stateTransitions = transitions.getOrDefault(state, Collections.emptyMap());
-        for (String nextState : stateTransitions.values()) {
-            findReachableStates(nextState, reachableStates);
-        }
+        System.out.println("Final states (F): " + F);
     }
 
     /**
@@ -159,116 +173,107 @@ public class FiniteAutomaton {
      * @return A set of accepted strings
      */
     public Set<String> getAcceptedStrings(int maxLength) {
+        if (maxLength < 0) {
+            throw new IllegalArgumentException("Maximum length cannot be negative");
+        }
+
         Set<String> results = new HashSet<>();
-        generateStrings("", startState, results, maxLength);
+        generateStrings("", q0, results, maxLength);
         return results;
     }
 
     /**
      * Recursively generates strings accepted by the automaton.
      *
-     * @param currentString The string being built
+     * @param prefix The string built so far
      * @param state The current state
-     * @param results The set of results to populate
-     * @param maxLength The maximum length of strings to generate
+     * @param results The set to collect results
+     * @param maxLength The maximum string length
      */
-    private void generateStrings(String currentString, String state, Set<String> results, int maxLength) {
-        // If current state is final, add the string to results
-        if (finalStates.contains(state)) {
-            results.add(currentString);
+    private void generateStrings(String prefix, String state, Set<String> results, int maxLength) {
+        // If we're in a final state, add the current string to results
+        if (F.contains(state)) {
+            results.add(prefix);
         }
 
         // Stop if we've reached the maximum length
-        if (currentString.length() >= maxLength) {
+        if (prefix.length() >= maxLength) {
             return;
         }
 
-        // Try all possible transitions from the current state
-        Map<String, String> stateTransitions = transitions.getOrDefault(state, Collections.emptyMap());
+        // Get transitions from current state
+        Map<String, String> stateTransitions = delta.getOrDefault(state, Collections.emptyMap());
+
+        // Try all possible transitions
         for (Map.Entry<String, String> transition : stateTransitions.entrySet()) {
             String symbol = transition.getKey();
             String nextState = transition.getValue();
-            generateStrings(currentString + symbol, nextState, results, maxLength);
+            generateStrings(prefix + symbol, nextState, results, maxLength);
         }
-    }
-
-    /**
-     * Checks if the automaton is deterministic.
-     *
-     * @return True if the automaton is deterministic, false otherwise
-     */
-    public boolean isDeterministic() {
-        // Check that each state has at most one transition for each symbol
-        for (String state : states) {
-            Map<String, String> stateTransitions = transitions.getOrDefault(state, Collections.emptyMap());
-            Set<String> symbols = new HashSet<>();
-
-            for (String symbol : stateTransitions.keySet()) {
-                if (!symbols.add(symbol)) {
-                    return false; // Symbol appears more than once
-                }
-            }
-        }
-        return true;
     }
 
     /**
      * Gets the set of states in the automaton.
      *
-     * @return Set of states
+     * @return Unmodifiable set of states (Q)
      */
     public Set<String> getStates() {
-        return Collections.unmodifiableSet(states);
+        return Collections.unmodifiableSet(Q);
     }
 
     /**
      * Gets the alphabet of the automaton.
      *
-     * @return Set of symbols in the alphabet
+     * @return Unmodifiable set of symbols in the alphabet (Σ)
      */
     public Set<String> getAlphabet() {
-        return Collections.unmodifiableSet(alphabet);
+        return Collections.unmodifiableSet(Sigma);
     }
 
     /**
      * Gets the start state of the automaton.
      *
-     * @return The start state
+     * @return The start state (q0)
      */
     public String getStartState() {
-        return startState;
+        return q0;
     }
 
     /**
      * Gets the set of final states in the automaton.
      *
-     * @return Set of final states
+     * @return Unmodifiable set of final states (F)
      */
     public Set<String> getFinalStates() {
-        return Collections.unmodifiableSet(finalStates);
+        return Collections.unmodifiableSet(F);
     }
 
     /**
      * Gets a string representation of the automaton.
      *
-     * @return String representation showing states, alphabet, transitions, etc.
+     * @return String representation using formal definition notation
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Finite Automaton:\n");
-        sb.append("States: ").append(states).append("\n");
-        sb.append("Alphabet: ").append(alphabet).append("\n");
-        sb.append("Start state: ").append(startState).append("\n");
-        sb.append("Final states: ").append(finalStates).append("\n");
-        sb.append("Transitions:\n");
+        sb.append("Finite Automaton (Q, Σ, δ, q0, F):\n");
+        sb.append("Q = ").append(Q).append("\n");
+        sb.append("Σ = ").append(Sigma).append("\n");
+        sb.append("q0 = ").append(q0).append("\n");
+        sb.append("F = ").append(F).append("\n");
+        sb.append("Transition function δ:\n");
 
-        for (String state : states) {
-            Map<String, String> stateTransitions = transitions.getOrDefault(state, Collections.emptyMap());
-            for (Map.Entry<String, String> transition : stateTransitions.entrySet()) {
-                sb.append("  ").append(state)
-                  .append(" --").append(transition.getKey()).append("--> ")
-                  .append(transition.getValue()).append("\n");
+        List<String> sortedStates = new ArrayList<>(Q);
+        Collections.sort(sortedStates);
+
+        for (String state : sortedStates) {
+            Map<String, String> stateTransitions = delta.getOrDefault(state, Collections.emptyMap());
+            List<String> symbols = new ArrayList<>(stateTransitions.keySet());
+            Collections.sort(symbols);
+
+            for (String symbol : symbols) {
+                sb.append("  δ(").append(state).append(",").append(symbol).append(") = ")
+                  .append(stateTransitions.get(symbol)).append("\n");
             }
         }
 
