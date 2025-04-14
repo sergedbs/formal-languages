@@ -8,28 +8,39 @@ import org.sergiu.lfa.grammars.model.SymbolType;
 import java.util.*;
 
 /**
- * Represents a finite automaton constructed from a grammar.
+ * Represents a finite automaton constructed from a regular grammar.
+ * <p>
  * This class implements the formal definition of a finite automaton as a 5-tuple:
  * (Q, Σ, δ, q0, F) where:
- * - Q: set of states
- * - Σ: alphabet (set of input symbols)
- * - δ: transition function δ: Q × Σ → Q
- * - q0: initial state
- * - F: set of final/accepting states
+ * <ul>
+ *   <li>Q: set of states</li>
+ *   <li>Σ: alphabet (set of input symbols)</li>
+ *   <li>δ: transition function δ: Q × Σ → Q</li>
+ *   <li>q0: initial state</li>
+ *   <li>F: set of final/accepting states</li>
+ * </ul>
+ * <p>
+ * The automaton is constructed from a regular grammar following the rules:
+ * <ul>
+ *   <li>For A → aB: Create a transition from state A to state B on input a</li>
+ *   <li>For A → a: Create a transition from state A to a new final state on input a</li>
+ *   <li>For A → ε: Make state A a final state</li>
+ * </ul>
  */
 public class FiniteAutomaton {
-    private final Set<String> Q;
-    private final Set<String> Sigma;
-    private final Map<String, Map<String, String>> delta;
-    private final String q0;
-    private final Set<String> F;
+    private final Set<String> Q; // States
+    private final Set<String> Sigma; // Alphabet
+    private final Map<String, Map<String, String>> delta; // Transition function
+    private final String q0; // Start state
+    private final Set<String> F; // Final states
     
     private static final String FINAL_STATE_SUFFIX = "_final";
 
     /**
-     * Constructs a finite automaton from the given grammar.
+     * Creates a finite automaton from the given grammar.
      *
-     * @param grammar The grammar to construct the automaton from
+     * @param grammar The grammar to convert into an automaton
+     * @throws NullPointerException If the grammar is null
      */
     public FiniteAutomaton(Grammar grammar) {
         Objects.requireNonNull(grammar, "Grammar cannot be null");
@@ -45,16 +56,38 @@ public class FiniteAutomaton {
     }
 
     /**
-     * Initialize the transition map with empty maps for each non-terminal.
+     * Factory method to create a finite automaton from a grammar.
+     * 
+     * @param grammar The grammar to convert
+     * @return A new FiniteAutomaton instance
+     */
+    public FiniteAutomaton fromGrammar(Grammar grammar) {
+        return new FiniteAutomaton(grammar);
+    }
+
+    /**
+     * Initializes the transition map with empty maps for each state.
      *
-     * @param nonTerminals Set of non-terminal symbols
+     * @param nonTerminals Set of non-terminal symbols that become states
      */
     private void initializeTransitionMap(Set<String> nonTerminals) {
         nonTerminals.forEach(state -> delta.put(state, new HashMap<>()));
     }
 
     /**
-     * Builds the automaton structure from the grammar productions.
+     * Gets the transition map for a specific state.
+     * <p>
+     * This method is primarily used for debugging and visualization purposes.
+     *
+     * @param state The state to get transitions for
+     * @return Map of transitions from the state or an empty map if none exist
+     */
+    public Map<String, String> getTransitionMapForState(String state) {
+        return Collections.unmodifiableMap(delta.getOrDefault(state, Collections.emptyMap()));
+    }
+
+    /**
+     * Constructs the automaton by processing grammar production rules.
      *
      * @param productions Set of productions from the grammar
      */
@@ -64,43 +97,43 @@ public class FiniteAutomaton {
             List<ProductionSymbol> right = production.right();
 
             if (right.isEmpty()) {
-                // Handle epsilon production
+                // Handle epsilon production: A → ε
                 F.add(left);
                 continue;
             }
 
-            // Find terminal and non-terminal in the production
-            Optional<ProductionSymbol> terminalOpt = right.stream()
+            // Extract terminal and non-terminal components from the production
+            Optional<ProductionSymbol> terminal = right.stream()
                     .filter(symbol -> symbol.type() == SymbolType.TERMINAL)
                     .findFirst();
-
-            Optional<ProductionSymbol> nonTerminalOpt = right.stream()
+                    
+            Optional<ProductionSymbol> nonTerminal = right.stream()
                     .filter(symbol -> symbol.type() == SymbolType.NON_TERMINAL)
                     .findFirst();
 
-            // Process only if we have a terminal symbol
-            terminalOpt.ifPresent(terminal ->
-                processProduction(left, terminal.value(), nonTerminalOpt.orElse(null)));
+            // Process production if it contains a terminal symbol
+            terminal.ifPresent(t -> 
+                processProduction(left, t.value(), nonTerminal.orElse(null)));
         }
     }
 
     /**
-     * Process a single production to create appropriate transitions.
+     * Processes a single production rule to create appropriate transitions.
      *
-     * @param sourceState The source state (left-hand side)
-     * @param terminalValue The terminal symbol value
-     * @param nonTerminal The optional non-terminal symbol
+     * @param sourceState The source state (left-hand side non-terminal)
+     * @param inputSymbol The input symbol (terminal)
+     * @param nonTerminal The optional non-terminal for the target state, or null
      */
-    private void processProduction(String sourceState, String terminalValue, ProductionSymbol nonTerminal) {
+    private void processProduction(String sourceState, String inputSymbol, ProductionSymbol nonTerminal) {
         if (nonTerminal != null) {
-            // Regular transition: A -> aB
-            delta.get(sourceState).put(terminalValue, nonTerminal.value());
+            // Production of the form A → aB
+            delta.get(sourceState).put(inputSymbol, nonTerminal.value());
         } else {
-            // Terminal-only production: A -> a
+            // Production of the form A → a
             String finalState = sourceState + FINAL_STATE_SUFFIX;
             Q.add(finalState);
             F.add(finalState);
-            delta.get(sourceState).put(terminalValue, finalState);
+            delta.get(sourceState).put(inputSymbol, finalState);
         }
     }
 
@@ -127,34 +160,30 @@ public class FiniteAutomaton {
 
             // Get transitions for current state
             Map<String, String> stateTransitions = delta.get(currentState);
-
-            // No transitions or no transition for this symbol
             if (stateTransitions == null || !stateTransitions.containsKey(symbol)) {
                 return false;
             }
 
-            // Move to next state
+            // Follow the transition
             currentState = stateTransitions.get(symbol);
         }
 
-        // Accept if we end in a final state
+        // Accept if final state
         return F.contains(currentState);
     }
 
     /**
-     * Prints the state transitions of the automaton in a readable format.
+     * Prints a formatted visualization of the automaton's transition function.
      */
     public void printTransitions() {
         System.out.println("State Transitions:");
 
-        // Sort states for consistent output
+        // Sort for consistent output
         List<String> sortedStates = new ArrayList<>(delta.keySet());
         Collections.sort(sortedStates);
 
         for (String state : sortedStates) {
             Map<String, String> stateTransitions = delta.get(state);
-
-            // Sort symbols for consistent output
             List<String> symbols = new ArrayList<>(stateTransitions.keySet());
             Collections.sort(symbols);
 
@@ -171,6 +200,7 @@ public class FiniteAutomaton {
      *
      * @param maxLength The maximum length of strings to generate
      * @return A set of accepted strings
+     * @throws IllegalArgumentException if maxLength is negative
      */
     public Set<String> getAcceptedStrings(int maxLength) {
         if (maxLength < 0) {
@@ -185,26 +215,24 @@ public class FiniteAutomaton {
     /**
      * Recursively generates strings accepted by the automaton.
      *
-     * @param prefix The string built so far
-     * @param state The current state
-     * @param results The set to collect results
-     * @param maxLength The maximum string length
+     * @param prefix Current string prefix
+     * @param state Current state
+     * @param results Collection to store accepted strings
+     * @param maxLength Maximum string length
      */
     private void generateStrings(String prefix, String state, Set<String> results, int maxLength) {
-        // If we're in a final state, add the current string to results
+        // Add current string if we're in a final state
         if (F.contains(state)) {
             results.add(prefix);
         }
 
-        // Stop if we've reached the maximum length
+        // Stop recursion if maximum length reached
         if (prefix.length() >= maxLength) {
             return;
         }
 
-        // Get transitions from current state
+        // Follow all possible transitions from current state
         Map<String, String> stateTransitions = delta.getOrDefault(state, Collections.emptyMap());
-
-        // Try all possible transitions
         for (Map.Entry<String, String> transition : stateTransitions.entrySet()) {
             String symbol = transition.getKey();
             String nextState = transition.getValue();
@@ -263,6 +291,7 @@ public class FiniteAutomaton {
         sb.append("F = ").append(F).append("\n");
         sb.append("Transition function δ:\n");
 
+        // Sort for consistent output
         List<String> sortedStates = new ArrayList<>(Q);
         Collections.sort(sortedStates);
 

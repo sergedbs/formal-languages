@@ -16,7 +16,7 @@ public class Main {
 
     /**
      * Application entry point.
-     * Creates necessary components, executes the grammar processor, and measures execution time.
+     * Creates necessary components and executes the grammar processor.
      *
      * @param args Command line arguments (not used)
      */
@@ -28,10 +28,7 @@ public class Main {
         // Create the Runner instance with dependency injection
         Runner runner = new Runner(parser);
 
-        // Execute and measure the run time
-        long startTime = System.nanoTime();
+        // Run the application
         runner.run();
-        long stopTime = System.nanoTime();
-        System.out.println("\n\nExecution time: " + (stopTime - startTime) / 1_000_000 + "ms");
     }
 }

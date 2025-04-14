@@ -1,6 +1,7 @@
 package org.sergiu.lfa.grammars;
 
 import org.sergiu.lfa.grammars.automaton.FiniteAutomaton;
+import org.sergiu.lfa.grammars.interactive.StringTester;
 import org.sergiu.lfa.grammars.model.Grammar;
 import org.sergiu.lfa.grammars.parser.GrammarParser;
 import org.sergiu.lfa.grammars.processor.GrammarProcessor;
@@ -10,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import static org.sergiu.lfa.grammars.Main.RULES_FILE_PATH;
 
@@ -26,6 +28,8 @@ public class Runner {
 
     public void run() {
         try {
+            long startTime = System.nanoTime();
+
             Path path = Path.of(RULES_FILE_PATH);
             if (!Files.exists(path)) {
                 throw new IOException("No grammar found at: " + path);
@@ -56,6 +60,21 @@ public class Runner {
 
             // Generate accepted strings up to length 5
             // System.out.println("\nAccepted Strings (length <= 5): " + automaton.getAcceptedStrings(5));
+
+
+            long stopTime = System.nanoTime();
+            System.out.println("\n\nExecution time: " + (stopTime - startTime) / 1_000_000 + "ms");
+
+            // Start interactive testing mode
+            System.out.print("\nDo you want to test your own strings? (y/n): ");
+            try (Scanner scanner = new Scanner(System.in)) {
+                String response = scanner.nextLine().trim().toLowerCase();
+                
+                if (response.equals("y") || response.equals("yes")) {
+                    StringTester tester = new StringTester(automaton);
+                    tester.startInteractiveMode();
+                }
+            }
 
         } catch (IOException e) {
             System.err.println("Error processing grammar file: " + e.getMessage());
