@@ -35,6 +35,9 @@ public class FiniteAutomaton {
     private final Set<String> F; // Final states
     
     private static final String FINAL_STATE_SUFFIX = "_final";
+    
+    // Add a cache for string acceptance
+    private final Map<String, Boolean> acceptanceCache;
 
     /**
      * Creates a finite automaton from the given grammar.
@@ -50,6 +53,7 @@ public class FiniteAutomaton {
         this.delta = new HashMap<>();
         this.q0 = grammar.startSymbol();
         this.F = new HashSet<>();
+        this.acceptanceCache = new HashMap<>();
 
         initializeTransitionMap(grammar.nonTerminals());
         buildAutomaton(grammar.rules());
@@ -139,6 +143,8 @@ public class FiniteAutomaton {
 
     /**
      * Checks if the automaton accepts the given input string.
+     * <p>
+     * This implementation uses a cache to avoid recomputing results for previously tested strings.
      *
      * @param input The input string to check
      * @return True if the string is accepted, false otherwise
@@ -147,7 +153,18 @@ public class FiniteAutomaton {
         if (input == null) {
             return false;
         }
-
+        
+        // Check cache first
+        return acceptanceCache.computeIfAbsent(input, this::checkAcceptance);
+    }
+    
+    /**
+     * Internal method to check string acceptance without caching.
+     * 
+     * @param input The input string to check
+     * @return True if the string is accepted, false otherwise
+     */
+    private boolean checkAcceptance(String input) {
         String currentState = q0;
 
         for (char c : input.toCharArray()) {
@@ -170,6 +187,14 @@ public class FiniteAutomaton {
 
         // Accept if final state
         return F.contains(currentState);
+    }
+    
+    /**
+     * Clears the string acceptance cache.
+     * This is useful if the automaton is modified after creation.
+     */
+    public void clearCache() {
+        acceptanceCache.clear();
     }
 
     /**
