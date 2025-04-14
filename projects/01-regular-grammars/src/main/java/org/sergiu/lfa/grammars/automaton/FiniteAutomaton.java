@@ -207,6 +207,42 @@ public class FiniteAutomaton {
     }
 
     /**
+     * Gets the set of states in the automaton.
+     *
+     * @return Set of states
+     */
+    public Set<String> getStates() {
+        return Collections.unmodifiableSet(states);
+    }
+
+    /**
+     * Gets the alphabet of the automaton.
+     *
+     * @return Set of symbols in the alphabet
+     */
+    public Set<String> getAlphabet() {
+        return Collections.unmodifiableSet(alphabet);
+    }
+
+    /**
+     * Gets the start state of the automaton.
+     *
+     * @return The start state
+     */
+    public String getStartState() {
+        return startState;
+    }
+
+    /**
+     * Gets the set of final states in the automaton.
+     *
+     * @return Set of final states
+     */
+    public Set<String> getFinalStates() {
+        return Collections.unmodifiableSet(finalStates);
+    }
+
+    /**
      * Gets a string representation of the automaton.
      *
      * @return String representation showing states, alphabet, transitions, etc.
