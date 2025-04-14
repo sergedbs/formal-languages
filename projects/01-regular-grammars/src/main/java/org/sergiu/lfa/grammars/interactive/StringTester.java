@@ -172,23 +172,4 @@ public class StringTester {
         
         System.out.println("+---------+--------------+---------+--------------+------------------+");
     }
-
-    /**
-     * Record class representing a transition step during string processing.
-     *
-     * @param position Position in the input string
-     * @param state Current state
-     * @param symbol Input symbol
-     * @param result Result of the transition
-     */
-    private record TransitionStep(int position, String state, String symbol, TransitionResult result) {}
-
-    /**
-     * Record class representing the result of a transition.
-     *
-     * @param valid Whether the transition is valid
-     * @param nextState The next state, or null if invalid
-     * @param message Status message
-     */
-    private record TransitionResult(boolean isValid, String nextState, String message) {}
 }

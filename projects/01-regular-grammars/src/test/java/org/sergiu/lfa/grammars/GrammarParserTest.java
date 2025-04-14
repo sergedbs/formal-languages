@@ -16,11 +16,11 @@ import static org.junit.Assert.assertEquals;
 
 public class GrammarParserTest {
 
-    Grammar expected;
-    Grammar actual;
+    private Grammar expected;
+    private Grammar actual;
 
-    GrammarProcessor expectedGrammar;
-    GrammarProcessor actualGrammar;
+    private GrammarProcessor expectedGrammar;
+    private GrammarProcessor actualGrammar;
 
     @Before
     public void setUp() {
