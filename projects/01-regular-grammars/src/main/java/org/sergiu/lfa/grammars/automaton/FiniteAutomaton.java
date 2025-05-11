@@ -24,7 +24,7 @@ import java.util.*;
  * <ul>
  *   <li>For A → aB: Create a transition from state A to state B on input a</li>
  *   <li>For A → a: Create a transition from state A to a new final state on input a</li>
- *   <li>For A → ε: Make state A a final state</li>
+ *   <li>For A → ε: Make state 'A' a final state</li>
  * </ul>
  */
 public class FiniteAutomaton {
