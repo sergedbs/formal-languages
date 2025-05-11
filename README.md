@@ -4,7 +4,7 @@ This repository contains materials, projects, and implementations related to the
 
 ## **Projects Overview**
 
-### **[01. Regular Languages and Finite Automata](projects/01-regular-languages)**
+### **[01. Regular Languages and Finite Automata](projects/01-regular-grammars)**
 
 This project includes grammar parsing, string generation, automaton construction, and string testing, along with an interactive mode for user-defined string testing.
 
