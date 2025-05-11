@@ -1,6 +1,6 @@
-package org.sergiu.lfa.grammars.interactive;
+package org.sergedb.fla.grammars.interactive;
 
-import org.sergiu.lfa.grammars.automaton.FiniteAutomaton;
+import org.sergedb.fla.grammars.automaton.FiniteAutomaton;
 
 import java.util.ArrayList;
 import java.util.List;

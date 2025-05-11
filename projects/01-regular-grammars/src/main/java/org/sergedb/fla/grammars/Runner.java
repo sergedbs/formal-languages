@@ -1,10 +1,10 @@
-package org.sergiu.lfa.grammars;
+package org.sergedb.fla.grammars;
 
-import org.sergiu.lfa.grammars.automaton.FiniteAutomaton;
-import org.sergiu.lfa.grammars.interactive.StringTester;
-import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.parser.GrammarParser;
-import org.sergiu.lfa.grammars.processor.GrammarProcessor;
+import org.sergedb.fla.grammars.automaton.FiniteAutomaton;
+import org.sergedb.fla.grammars.interactive.StringTester;
+import org.sergedb.fla.grammars.model.Grammar;
+import org.sergedb.fla.grammars.parser.GrammarParser;
+import org.sergedb.fla.grammars.processor.GrammarProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static org.sergiu.lfa.grammars.Main.RULES_FILE_PATH;
+import static org.sergedb.fla.grammars.Main.RULES_FILE_PATH;
 
 public class Runner {
     private final GrammarParser grammarParser;

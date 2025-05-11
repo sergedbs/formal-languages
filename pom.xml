@@ -14,7 +14,7 @@
 
     <modules>
         <module>projects/01-regular-grammars</module>
-
+        <module>projects/02-finite-automata</module>
     </modules>
 
     <properties>

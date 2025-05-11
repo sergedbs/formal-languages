@@ -1,9 +1,9 @@
-package org.sergiu.lfa.grammars.parser;
+package org.sergedb.fla.grammars.parser;
 
-import org.sergiu.lfa.grammars.model.SymbolType;
-import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.Production;
-import org.sergiu.lfa.grammars.model.ProductionSymbol;
+import org.sergedb.fla.grammars.model.SymbolType;
+import org.sergedb.fla.grammars.model.Grammar;
+import org.sergedb.fla.grammars.model.Production;
+import org.sergedb.fla.grammars.model.ProductionSymbol;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.sergiu.lfa.grammars.Main.*;
+import static org.sergedb.fla.grammars.Main.*;
 
 /**
  * Parses grammar definitions from text into structured {@link Grammar} objects.

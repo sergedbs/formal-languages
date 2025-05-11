@@ -1,13 +1,13 @@
-package org.sergiu.lfa.grammars;
+package org.sergedb.fla.grammars;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.Production;
-import org.sergiu.lfa.grammars.model.ProductionSymbol;
-import org.sergiu.lfa.grammars.model.SymbolType;
-import org.sergiu.lfa.grammars.parser.GrammarParser;
-import org.sergiu.lfa.grammars.processor.GrammarProcessor;
+import org.sergedb.fla.grammars.model.Grammar;
+import org.sergedb.fla.grammars.model.Production;
+import org.sergedb.fla.grammars.model.ProductionSymbol;
+import org.sergedb.fla.grammars.model.SymbolType;
+import org.sergedb.fla.grammars.parser.GrammarParser;
+import org.sergedb.fla.grammars.processor.GrammarProcessor;
 
 import java.util.List;
 import java.util.Set;

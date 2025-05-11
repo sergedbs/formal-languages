@@ -1,6 +1,6 @@
-package org.sergiu.lfa.grammars;
+package org.sergedb.fla.grammars;
 
-import org.sergiu.lfa.grammars.parser.GrammarParser;
+import org.sergedb.fla.grammars.parser.GrammarParser;
 
 /**
  * Main application entry point for the Regular Grammar Processor.

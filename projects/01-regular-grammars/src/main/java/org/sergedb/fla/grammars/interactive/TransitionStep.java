@@ -1,4 +1,4 @@
-package org.sergiu.lfa.grammars.interactive;
+package org.sergedb.fla.grammars.interactive;
 
 /**
  * Record class representing a transition step during string processing.

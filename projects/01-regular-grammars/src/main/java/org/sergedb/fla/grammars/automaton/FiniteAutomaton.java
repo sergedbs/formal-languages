@@ -1,9 +1,9 @@
-package org.sergiu.lfa.grammars.automaton;
+package org.sergedb.fla.grammars.automaton;
 
-import org.sergiu.lfa.grammars.model.Grammar;
-import org.sergiu.lfa.grammars.model.Production;
-import org.sergiu.lfa.grammars.model.ProductionSymbol;
-import org.sergiu.lfa.grammars.model.SymbolType;
+import org.sergedb.fla.grammars.model.Grammar;
+import org.sergedb.fla.grammars.model.Production;
+import org.sergedb.fla.grammars.model.ProductionSymbol;
+import org.sergedb.fla.grammars.model.SymbolType;
 
 import java.util.*;
 

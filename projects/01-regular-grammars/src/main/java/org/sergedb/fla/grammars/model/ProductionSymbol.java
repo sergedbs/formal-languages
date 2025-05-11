@@ -1,4 +1,4 @@
-package org.sergiu.lfa.grammars.model;
+package org.sergedb.fla.grammars.model;
 
 /**
  * Represents a symbol on the right-hand side of a production rule.
