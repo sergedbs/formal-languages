@@ -24,11 +24,8 @@ public record Production(String left, List<ProductionSymbol> right) {
         if (right.isEmpty()) {
             return left + " ----> ε";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append(left).append(" ----> ");
-        for (ProductionSymbol symbol : right) {
-            sb.append(symbol.value());
-        }
-        return sb.toString();
+        ProductionSymbol terminal = right.stream().filter(token -> token.type() == SymbolType.TERMINAL).findFirst().orElse(null);
+        ProductionSymbol nonTerminal = right.stream().filter(token -> token.type() == SymbolType.NON_TERMINAL).findFirst().orElse(null);
+        return "\n\t" + left + " --" + (terminal != null ? "(" + terminal.value() + ")" : "---") + "--> " + (nonTerminal != null ? nonTerminal.value() : "ε");
     }
 }

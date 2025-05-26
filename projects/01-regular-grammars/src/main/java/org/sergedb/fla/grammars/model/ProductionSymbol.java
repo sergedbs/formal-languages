@@ -19,4 +19,4 @@ public record ProductionSymbol(String value, SymbolType type) {
         public String toString() {
             return value;
         }
-    }
+}

@@ -15,8 +15,8 @@ package org.sergedb.fla.chomsky.model;
  */
 public record ProductionSymbol(String value, SymbolType type) {
 
-        @Override
-        public String toString() {
-            return value;
-        }
+    @Override
+    public String toString() {
+        return value;
     }
+}
