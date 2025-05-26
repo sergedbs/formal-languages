@@ -1,4 +1,4 @@
-# Regular Grammars and Finite Automata
+# Regular Grammars & Finite Automata
 
 ## Theory
 

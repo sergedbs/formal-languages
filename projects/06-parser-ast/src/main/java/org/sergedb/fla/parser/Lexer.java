@@ -15,8 +15,6 @@ public class Lexer {
     private int current = 0;
     private int line = 1;
 
-    // Define token patterns using regex
-    // Order matters for patterns that might overlap (e.g., keywords vs. identifiers if any)
     private static final Pattern P_SIN = Pattern.compile("\\bsin\\b");
     private static final Pattern P_COS = Pattern.compile("\\bcos\\b");
     private static final Pattern P_TAN = Pattern.compile("\\btan\\b");
@@ -27,7 +25,7 @@ public class Lexer {
     private static final Pattern P_DIVIDE = Pattern.compile("/");
     private static final Pattern P_LPAREN = Pattern.compile("\\(");
     private static final Pattern P_RPAREN = Pattern.compile("\\)");
-    private static final Pattern P_WHITESPACE = Pattern.compile("[ \\t\\r]+"); // Matches one or more whitespace chars
+    private static final Pattern P_WHITESPACE = Pattern.compile("[ \\t\\r]+");
     private static final Pattern P_NEWLINE = Pattern.compile("\\n");
 
     public Lexer(String source) {
@@ -39,7 +37,7 @@ public class Lexer {
             start = current;
             scanToken();
         }
-        tokens.add(new Token(TokenType.EOF, "", null, line)); // Add EOF token
+        tokens.add(new Token(TokenType.EOF, "", null, line));
         return tokens;
     }
 
@@ -48,20 +46,17 @@ public class Lexer {
     }
 
     private void scanToken() {
-        // Try to match each token type. Order can be important.
-        // More specific tokens (keywords) should generally be checked before more general ones if ambiguity exists.
 
         if (matchAndConsume(P_NEWLINE)) {
             line++;
-            return; // Handled, move to next token
+            return;
         }
 
         if (matchAndConsume(P_WHITESPACE)) {
             // Ignore whitespace
-            return; // Handled, move to next token
+            return; 
         }
 
-        // Check for keywords/functions first
         if (matchAndConsume(P_SIN)) {
             addToken(TokenType.SIN);
         } else if (matchAndConsume(P_COS)) {
@@ -83,9 +78,7 @@ public class Lexer {
         } else if (matchAndConsume(P_RPAREN)) {
             addToken(TokenType.RPAREN);
         } else {
-            // If no pattern matches and not at end, it's an unknown character/token
             if (!isAtEnd()) {
-                // Consume the single unknown character to avoid infinite loop
                 char unknownChar = source.charAt(current);
                 current++; 
                 addToken(TokenType.UNKNOWN, String.valueOf(unknownChar));
@@ -95,9 +88,8 @@ public class Lexer {
 
     private boolean matchAndConsume(Pattern pattern) {
         Matcher matcher = pattern.matcher(source);
-        // Use matcher.lookingAt() to match only from the current 'current' position
         if (matcher.find(current) && matcher.start() == current) {
-            current = matcher.end(); // Consume the matched part
+            current = matcher.end();
             return true;
         }
         return false;

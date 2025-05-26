@@ -1,4 +1,4 @@
-# Lexer and Scanner
+# Lexer & Scanner
 
 ## Theory
 

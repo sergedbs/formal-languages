@@ -1,4 +1,4 @@
-# Regular Expressions and String Generation
+# Regular Expressions & String Generation
 
 ## Theory
 

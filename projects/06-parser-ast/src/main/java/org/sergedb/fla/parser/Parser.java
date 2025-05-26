@@ -20,17 +20,15 @@ public class Parser {
         if (position < tokens.size()) {
             return tokens.get(position);
         }
-        // Use the existing EOF token from the list if available, otherwise create one.
-        // The Lexer should already add an EOF token.
         Token lastToken = tokens.get(tokens.size() - 1);
         if (lastToken.type() == TokenType.EOF) {
             return lastToken;
         }
-        return new Token(TokenType.EOF, "", null, 0); // Fallback, should ideally not be reached if lexer is correct
+        return new Token(TokenType.EOF, "", null, 0); 
     }
 
     private void advance() {
-        if (position < tokens.size()) { // Ensure we don't advance past the end of actual tokens
+        if (position < tokens.size()) {
             position++;
         }
     }
@@ -38,10 +36,7 @@ public class Parser {
     public ASTNode parse() {
         ASTNode result = parseExpression();
         if (getCurrentToken().type() != TokenType.EOF) {
-            // This check helps ensure the entire input was consumed if it's a valid expression.
-            // However, the example doesn't explicitly throw if not EOF, it just stops parsing.
-            // Depending on strictness, you might want to throw an error here if not EOF.
-            // For now, let's stick to the example's behavior.
+            throw new ParseException("Unexpected token after expression: " + getCurrentToken().lexeme(), getCurrentToken());
         }
         return result;
     }
@@ -55,9 +50,7 @@ public class Parser {
             Token operatorToken = getCurrentToken();
             advance();
             ASTNode right = parseTerm();
-            // The ASTNode in your project takes NodeType and a String value.
-            // The value for an operation can be the operator's lexeme or its type name.
-            // Example used op.getType().toString()
+
             ASTNode operationNode = new ASTNode(NodeType.BINARY_OPERATION, operatorToken.lexeme());
             operationNode.addChild(node);
             operationNode.addChild(right);
@@ -89,7 +82,6 @@ public class Parser {
 
         if (token.type() == TokenType.NUMBER) {
             advance();
-            // ASTNode constructor expects a String value for the number.
             return new ASTNode(NodeType.NUMBER, token.lexeme());
         } else if (token.type() == TokenType.SIN || token.type() == TokenType.COS || token.type() == TokenType.TAN) {
             Token functionToken = token;
@@ -97,7 +89,6 @@ public class Parser {
             expect(TokenType.LPAREN);
             ASTNode argument = parseExpression();
             expect(TokenType.RPAREN);
-            // The value for a function call can be the function's name (lexeme).
             ASTNode funcNode = new ASTNode(NodeType.FUNCTION_CALL, functionToken.lexeme());
             funcNode.addChild(argument);
             return funcNode;
@@ -106,10 +97,10 @@ public class Parser {
             ASTNode node = parseExpression();
             expect(TokenType.RPAREN);
             return node;
-        } else if (token.type() == TokenType.MINUS) { // Handling unary minus
+        } else if (token.type() == TokenType.MINUS) { 
             Token operatorToken = token;
             advance();
-            ASTNode operand = parseFactor(); // Recursively call parseFactor for the operand
+            ASTNode operand = parseFactor();
             ASTNode unaryNode = new ASTNode(NodeType.UNARY_OPERATION, operatorToken.lexeme());
             unaryNode.addChild(operand);
             return unaryNode;
@@ -127,7 +118,6 @@ public class Parser {
         }
     }
 
-    // Custom ParseException class
     public static class ParseException extends RuntimeException {
         public ParseException(String message, Token token) {
             super(message + " at line " + token.line() + " near '" + token.lexeme() + "'");
