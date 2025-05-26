@@ -44,16 +44,107 @@ The order of these steps can be important, and some steps (like eliminating non-
 
 ## Implementation Description
 
-* **`GrammarParser.java`**: This class is responsible for reading a grammar definition from a string (which is typically loaded from a file). It parses the non-terminal symbols, terminal symbols, and production rules into a `Grammar` object.
-* **`CNF.java`**: This class contains the core logic for converting a `Grammar` object into Chomsky Normal Form. It includes methods for each step of the conversion:
-  * `eliminateEpsilonProductions()`
-  * `eliminateUnitProductions()`
-  * `eliminateNonProductiveSymbols()`
-  * `eliminateInaccessibleSymbols()`
-  * `transformToChomskyForm()` (handles TERM and BIN steps)
-  The `convertToCNF()` method orchestrates these steps and includes repeated cleanup phases.
-* **`Main.java`**: The entry point of the application. It reads a grammar file path (or uses a default), invokes the `GrammarParser` to parse it, and then calls the `CNF` converter to transform the grammar, printing the results of each stage.
-* **Model Classes (`Grammar.java`, `Production.java`, `ProductionSymbol.java`, `SymbolType.java`)**: These record classes define the structure for representing the grammar, its rules, and symbols.
+This project is designed to parse a context-free grammar and convert it into Chomsky Normal Form (CNF). The implementation is divided into several key Java classes, each with a specific role in the process.
+
+### `GrammarParser.java`
+
+This class is responsible for parsing a grammar definition provided as a string (typically read from a file like `rules.txt`). It extracts the following components:
+
+* **`V_N`**: The set of non-terminal symbols.
+* **`V_T`**: The set of terminal symbols.
+* **`P`**: The set of production rules.
+
+The parser ensures the presence of a start symbol (defaulting to "S" if not specified) and validates that all symbols in the production rules are defined as either non-terminals or terminals. It also recognizes epsilon productions (e.g., `A -> ε`). The primary method `parseFromString(String grammarDefinition)` returns a `Grammar` object.
+
+```java
+public Grammar parseFromString(String grammarDefinition) {
+    // Parsing logic to extract V_N, V_T, and P
+}
+```
+
+### `CNF.java`
+
+This class implements the algorithm to convert a `Grammar` object into Chomsky Normal Form. The conversion process involves multiple steps, each handled by a dedicated method. The main method `convertToCNF(Grammar grammar)` orchestrates these steps and ensures correctness by applying cleanup phases iteratively.
+
+#### Key Steps in CNF Conversion
+
+1. **START**: Ensures the start symbol does not appear on the right-hand side of any production. If necessary, a new start symbol `S_0` is introduced with a rule `S_0 -> S`.
+2. **Eliminate ε-Productions**: Removes rules of the form `A -> ε`. For every rule `B -> XAY` where `A` is nullable, a new rule `B -> XY` is added.
+
+   ```java
+   private Grammar eliminateEpsilonProductions(Grammar grammar) {
+       // Logic to identify nullable symbols and generate new productions
+   }
+   ```
+
+3. **Eliminate Unit Productions**: Removes rules of the form `A -> B` (where A and B are non-terminals). If `A -> B` and `B -> α` exist, then `A -> α` is added.
+
+   ```java
+   private Grammar eliminateUnitProductions(Grammar grammar) {
+       // Logic to replace unit productions
+   }
+   ```
+
+4. **Eliminate Non-Productive Symbols**: Removes non-terminals that cannot derive any sequence of terminal symbols.
+5. **Eliminate Inaccessible Symbols**: Removes symbols that cannot be reached from the start symbol.
+6. **Transform to CNF Form**: Converts remaining rules into the required forms:
+   * **`A -> BC`**: For rules with two non-terminals on the right-hand side.
+   * **`A -> a`**: For rules with a single terminal on the right-hand side.
+
+   ```java
+   public Grammar transformToChomskyForm(Grammar grammar) {
+       // Logic to transform productions into CNF
+   }
+   ```
+
+### `Main.java`
+
+This class serves as the entry point for the application. It orchestrates the entire process:
+
+1. Reads the grammar definition from a file (defaulting to `rules.txt` if no file path is provided).
+2. Parses the grammar using `GrammarParser`.
+3. Converts the parsed grammar to CNF using `CNF`.
+4. Prints the original and final CNF grammar to the console.
+
+```java
+public static void main(String[] args) {
+    // Argument handling and conversion logic
+}
+```
+
+### Model Classes
+
+These classes define the data structures for representing the grammar and its components:
+
+* **`Grammar.java`**: Represents a context-free grammar as a 4-tuple `(V_N, V_T, S, P)`.
+
+  ```java
+  public record Grammar(Set<String> nonTerminals, Set<String> terminals, String startSymbol, Set<Production> rules) {
+      // Overrides for easy printing
+  }
+  ```
+
+* **`Production.java`**: Represents a single production rule, e.g., `S -> AB`.
+
+  ```java
+  public record Production(String left, List<ProductionSymbol> right) {
+      // Overrides for easy printing
+  }
+  ```
+
+* **`ProductionSymbol.java`**: Represents a symbol on the right-hand side of a production.
+
+  ```java
+  public record ProductionSymbol(String value, SymbolType type) {
+      // Overrides for easy printing
+  }
+  ```
+
+* **`SymbolType.java`**: An enum with values `TERMINAL` and `NON_TERMINAL` to classify symbols.
+
+  ```java
+  public enum SymbolType { TERMINAL, NON_TERMINAL }
+  ```
 
 ## Conclusion
 
