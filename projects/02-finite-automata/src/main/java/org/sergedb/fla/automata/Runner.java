@@ -30,6 +30,12 @@ public class Runner {
             System.out.println("--- PARSED AUTOMATON ---");
             System.out.println(automaton.toString());
 
+            System.out.println("\n--- AUTOMATON PROPERTIES ---");
+            if (automaton.isDeterministic()) {
+                System.out.println("The automaton is Deterministic (DFA).");
+            } else {
+                System.out.println("The automaton is Non-Deterministic (NDFA).");
+            }
 
         } catch (IOException e) {
             System.err.println("Error reading the automaton file: " + e.getMessage());

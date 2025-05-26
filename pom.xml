@@ -15,6 +15,11 @@
     <modules>
         <module>projects/01-regular-grammars</module>
         <module>projects/02-finite-automata</module>
+        <module>projects/03-lexer-scanner</module>
+        <module>projects/04-regular-expressions</module>
+        <module>projects/05-chomsky-normal-form</module>
+        <module>projects/06-parser-ast</module>
+
     </modules>
 
     <properties>
