@@ -8,10 +8,14 @@ import org.sergedb.fla.grammars.parser.GrammarParser;
  */
 public class Main {
 
-    /** Default path to the file containing the grammar rules */
+    /**
+     * Default path to the file containing the grammar rules
+     */
     public static final String RULES_FILE_PATH = "projects/01-regular-grammars/src/main/resources/rules.txt";
 
-    /** Regular expression pattern for parsing grammar sections */
+    /**
+     * Regular expression pattern for parsing grammar sections
+     */
     public static final String REGEX_PATTERN = "(?i)%s\\s*=\\s*\\{\\s*((?:[^{}]|[\\r\\n])*)\\s*}";
 
     /**

@@ -28,14 +28,12 @@ import java.util.*;
  * </ul>
  */
 public class FiniteAutomaton {
+    private static final String FINAL_STATE_SUFFIX = "_final";
     private final Set<String> Q; // States
     private final Set<String> Sigma; // Alphabet
     private final Map<String, Map<String, String>> delta; // Transition function
     private final String q0; // Start state
     private final Set<String> F; // Final states
-    
-    private static final String FINAL_STATE_SUFFIX = "_final";
-    
     // Add a cache for string acceptance
     private final Map<String, Boolean> acceptanceCache;
 
@@ -61,7 +59,7 @@ public class FiniteAutomaton {
 
     /**
      * Factory method to create a finite automaton from a grammar.
-     * 
+     *
      * @param grammar The grammar to convert
      * @return A new FiniteAutomaton instance
      */
@@ -110,14 +108,14 @@ public class FiniteAutomaton {
             Optional<ProductionSymbol> terminal = right.stream()
                     .filter(symbol -> symbol.type() == SymbolType.TERMINAL)
                     .findFirst();
-                    
+
             Optional<ProductionSymbol> nonTerminal = right.stream()
                     .filter(symbol -> symbol.type() == SymbolType.NON_TERMINAL)
                     .findFirst();
 
             // Process production if it contains a terminal symbol
-            terminal.ifPresent(t -> 
-                processProduction(left, t.value(), nonTerminal.orElse(null)));
+            terminal.ifPresent(t ->
+                    processProduction(left, t.value(), nonTerminal.orElse(null)));
         }
     }
 
@@ -153,14 +151,14 @@ public class FiniteAutomaton {
         if (input == null) {
             return false;
         }
-        
+
         // Check cache first
         return acceptanceCache.computeIfAbsent(input, this::checkAcceptance);
     }
-    
+
     /**
      * Internal method to check string acceptance without caching.
-     * 
+     *
      * @param input The input string to check
      * @return True if the string is accepted, false otherwise
      */
@@ -188,7 +186,7 @@ public class FiniteAutomaton {
         // Accept if final state
         return F.contains(currentState);
     }
-    
+
     /**
      * Clears the string acceptance cache.
      * This is useful if the automaton is modified after creation.
@@ -240,9 +238,9 @@ public class FiniteAutomaton {
     /**
      * Recursively generates strings accepted by the automaton.
      *
-     * @param prefix Current string prefix
-     * @param state Current state
-     * @param results Collection to store accepted strings
+     * @param prefix    Current string prefix
+     * @param state     Current state
+     * @param results   Collection to store accepted strings
      * @param maxLength Maximum string length
      */
     private void generateStrings(String prefix, String state, Set<String> results, int maxLength) {
@@ -327,7 +325,7 @@ public class FiniteAutomaton {
 
             for (String symbol : symbols) {
                 sb.append("  δ(").append(state).append(",").append(symbol).append(") = ")
-                  .append(stateTransitions.get(symbol)).append("\n");
+                        .append(stateTransitions.get(symbol)).append("\n");
             }
         }
 

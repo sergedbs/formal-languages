@@ -20,10 +20,10 @@ public class Main {
         try {
             System.out.println("Reading grammar from: " + filePath);
             String grammarDefinition = new String(Files.readAllBytes(Paths.get(filePath)));
-            
+
             GrammarParser parser = new GrammarParser();
             Grammar grammar = parser.parseFromString(grammarDefinition);
-            
+
             System.out.println("Successfully parsed grammar.");
             // System.out.println("Initial Grammar:");
             // System.out.println(grammar);

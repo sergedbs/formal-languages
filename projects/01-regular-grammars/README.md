@@ -2,7 +2,10 @@
 
 ## Theory
 
-Regular grammars are a subset of formal grammars used to describe regular languages. They consist of production rules that define how terminal and non-terminal symbols can be combined to form strings in the language. Finite automata are computational models that recognize regular languages by processing input strings through states and transitions. This project demonstrates the equivalence between regular grammars and finite automata.
+Regular grammars are a subset of formal grammars used to describe regular languages. They consist of production rules
+that define how terminal and non-terminal symbols can be combined to form strings in the language. Finite automata are
+computational models that recognize regular languages by processing input strings through states and transitions. This
+project demonstrates the equivalence between regular grammars and finite automata.
 
 ## Objectives
 
@@ -22,35 +25,40 @@ Regular grammars are a subset of formal grammars used to describe regular langua
 
 ## Implementation description
 
-* **Grammar Parsing**: The `GrammarParser` class parses grammar definitions from a file or string. It validates the grammar components and constructs a `Grammar` object.
+* **Grammar Parsing**: The `GrammarParser` class parses grammar definitions from a file or string. It validates the
+  grammar components and constructs a `Grammar` object.
 
   ```java
   public Grammar parseFromFile(Path filePath) throws IOException {
   }
   ```
 
-* **String Generation**: The `GrammarProcessor` class generates random strings by recursively applying production rules starting from the start symbol.
+* **String Generation**: The `GrammarProcessor` class generates random strings by recursively applying production rules
+  starting from the start symbol.
 
   ```java
   public String generateString() {
   }
   ```
 
-* **Finite Automaton Construction**: The `FiniteAutomaton` class converts the grammar into a finite automaton by mapping production rules to states and transitions.
+* **Finite Automaton Construction**: The `FiniteAutomaton` class converts the grammar into a finite automaton by mapping
+  production rules to states and transitions.
 
   ```java
   public FiniteAutomaton(Grammar grammar) {
   }
   ```
 
-* **Interactive String Testing**: The `StringTester` class provides a console-based interface for testing strings against the finite automaton.
+* **Interactive String Testing**: The `StringTester` class provides a console-based interface for testing strings
+  against the finite automaton.
 
   ```java
   public void startInteractiveMode() {
   }
   ```
 
-* **Main Runner**: The `Runner` class orchestrates the execution, including grammar parsing, string generation, automaton construction, and interactive testing.
+* **Main Runner**: The `Runner` class orchestrates the execution, including grammar parsing, string generation,
+  automaton construction, and interactive testing.
 
   ```java
   public void run() {
@@ -78,10 +86,10 @@ P={ S -> aA | bB,      // Production rules
 ## Project Structure
 
 * **`src/main/java`**: Contains the main application code.
-  * `parser`: Parses grammar definitions.
-  * `processor`: Processes grammars for string generation.
-  * `automaton`: Constructs finite automata from grammars.
-  * `interactive`: Provides an interactive console for string testing.
+    * `parser`: Parses grammar definitions.
+    * `processor`: Processes grammars for string generation.
+    * `automaton`: Constructs finite automata from grammars.
+    * `interactive`: Provides an interactive console for string testing.
 * **`src/test/java`**: Contains unit tests for the project.
 * **`src/main/resources`**: Contains the grammar definition file (`rules.txt`).
 
@@ -136,4 +144,6 @@ String "bd" is ACCEPTED by the automaton
 
 ## Conclusion
 
-Regular grammars and finite automata are equivalent models for representing regular languages, as demonstrated in this project through parsing, string generation, and testing. The interactive mode further enhances user engagement by enabling custom string testing, showcasing the practical applications of these concepts.
+Regular grammars and finite automata are equivalent models for representing regular languages, as demonstrated in this
+project through parsing, string generation, and testing. The interactive mode further enhances user engagement by
+enabling custom string testing, showcasing the practical applications of these concepts.

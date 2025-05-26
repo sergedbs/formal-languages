@@ -1,9 +1,9 @@
 package org.sergedb.fla.automata;
 
 import org.sergedb.fla.automata.model.Automaton;
+import org.sergedb.fla.automata.model.Grammar;
 import org.sergedb.fla.automata.parser.AutomatonParser;
 import org.sergedb.fla.automata.processor.AutomatonProcessor;
-import org.sergedb.fla.automata.model.Grammar;
 
 import java.io.IOException;
 import java.nio.file.Files;

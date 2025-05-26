@@ -1,6 +1,7 @@
 package org.sergedb.fla.automata.processor;
 
 import org.sergedb.fla.automata.model.*;
+
 import java.util.*;
 
 public class AutomatonProcessor {

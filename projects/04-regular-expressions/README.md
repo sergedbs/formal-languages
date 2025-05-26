@@ -2,19 +2,24 @@
 
 ## Theory
 
-Regular expressions are a powerful tool for pattern matching and string manipulation. They are widely used in text processing, validation, and parsing tasks. A regular expression defines a search pattern, which can be used to match strings or parts of strings. This project explores the implementation of a regular expression engine capable of parsing, generating, and testing strings based on given patterns.
+Regular expressions are a powerful tool for pattern matching and string manipulation. They are widely used in text
+processing, validation, and parsing tasks. A regular expression defines a search pattern, which can be used to match
+strings or parts of strings. This project explores the implementation of a regular expression engine capable of parsing,
+generating, and testing strings based on given patterns.
 
 ## Objectives
 
 1. Understand what regular expressions are and their applications in text processing and pattern matching.
 2. Write a program to dynamically generate valid combinations of symbols conforming to given regular expressions.
-3. Implement a limit of 5 repetitions for symbols with undefined repetition counts to avoid generating excessively long strings.
+3. Implement a limit of 5 repetitions for symbols with undefined repetition counts to avoid generating excessively long
+   strings.
 4. Provide a detailed sequence of processing steps for each regular expression as a bonus feature.
 5. Write a comprehensive report covering all performed actions, faced difficulties, and how the code works.
 
 ## Implementation description
 
-- **Regex Parsing**: The `Parser` class converts a regular expression into an abstract syntax tree (AST). It handles constructs like literals, quantifiers (`*`, `+`, `?`, `{m,n}`), alternation (`|`), and grouping (`()`).
+- **Regex Parsing**: The `Parser` class converts a regular expression into an abstract syntax tree (AST). It handles
+  constructs like literals, quantifiers (`*`, `+`, `?`, `{m,n}`), alternation (`|`), and grouping (`()`).
 
 ```java
 public RegexNode parse() {
@@ -29,7 +34,8 @@ public RegexNode parse() {
 }
 ```
 
-- **String Generation**: The `Generator` class generates random strings based on the AST. It recursively traverses the tree, applying the rules defined by the regex constructs.
+- **String Generation**: The `Generator` class generates random strings based on the AST. It recursively traverses the
+  tree, applying the rules defined by the regex constructs.
 
 ```java
 public List<String> generate(RegexNode astRoot, int count) {
@@ -52,7 +58,8 @@ public List<String> generate(RegexNode astRoot, int count) {
 }
 ```
 
-- **Tokenization**: The `Lexer` class tokenizes the input regex into meaningful components like literals, operators, and quantifiers.
+- **Tokenization**: The `Lexer` class tokenizes the input regex into meaningful components like literals, operators, and
+  quantifiers.
 
 ```java
 public List<Token> tokenize() {
@@ -76,7 +83,8 @@ public List<Token> tokenize() {
 }
 ```
 
-- **Main Runner**: The `Main` class orchestrates the execution, including regex parsing, string generation, and displaying results.
+- **Main Runner**: The `Main` class orchestrates the execution, including regex parsing, string generation, and
+  displaying results.
 
 ```java
 public static void main(String[] args) {
@@ -102,4 +110,7 @@ public static void main(String[] args) {
 
 ## Conclusion
 
-This project demonstrates the power and flexibility of regular expressions in string generation and validation. By implementing a custom regex engine, we gained insights into the inner workings of regex parsing and string generation. The ability to handle diverse regex constructs and provide detailed processing steps enhances the usability and robustness of the implementation.
+This project demonstrates the power and flexibility of regular expressions in string generation and validation. By
+implementing a custom regex engine, we gained insights into the inner workings of regex parsing and string generation.
+The ability to handle diverse regex constructs and provide detailed processing steps enhances the usability and
+robustness of the implementation.

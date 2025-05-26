@@ -58,13 +58,19 @@ public class AutomatonParser {
      * The non-capturing group (?:\s*,|\s*$) ensures that a transition is followed by a comma or is at the end of the parsable content.
      */
     private static final Pattern SINGLE_TRANSITION_PATTERN = Pattern.compile(
-        "\\s*\\(\\s*([^,]+?)\\s*,\\s*([^)]+?)\\s*\\)\\s*=\\s*([^,]+?)(?:\\s*,|\\s*$)");
+            "\\s*\\(\\s*([^,]+?)\\s*,\\s*([^)]+?)\\s*\\)\\s*=\\s*([^,]+?)(?:\\s*,|\\s*$)");
 
-    /** Regex for states (Q = {...}). Uses {@link #REGEX_PATTERN}. */
+    /**
+     * Regex for states (Q = {...}). Uses {@link #REGEX_PATTERN}.
+     */
     private static final Pattern STATES_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "Q"), Pattern.DOTALL);
-    /** Regex for alphabet (∑ = {...} or Sigma = {...}). Uses {@link #REGEX_PATTERN}. */
+    /**
+     * Regex for alphabet (∑ = {...} or Sigma = {...}). Uses {@link #REGEX_PATTERN}.
+     */
     private static final Pattern ALPHABET_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "(?:∑|Sigma)"), Pattern.DOTALL);
-    /** Regex for final states (F = {...}). Uses {@link #REGEX_PATTERN}. */
+    /**
+     * Regex for final states (F = {...}). Uses {@link #REGEX_PATTERN}.
+     */
     private static final Pattern FINAL_STATES_PATTERN = Pattern.compile(String.format(REGEX_PATTERN, "F"), Pattern.DOTALL);
 
     /**
@@ -72,7 +78,7 @@ public class AutomatonParser {
      *
      * @param filePath Path to the file containing the automaton definition.
      * @return A structured {@link Automaton} object representing the parsed automaton.
-     * @throws IOException If the file cannot be read or does not exist.
+     * @throws IOException              If the file cannot be read or does not exist.
      * @throws IllegalArgumentException If the automaton definition is invalid or malformed.
      */
     public Automaton parseFromFile(Path filePath) throws IOException {
@@ -111,7 +117,7 @@ public class AutomatonParser {
             throw new IllegalArgumentException("Final states " + undefinedFinalStates + " are not defined in Q.");
         }
         if (!states.contains(startState)) {
-             throw new IllegalArgumentException("Start state '" + startState + "' is not defined in Q.");
+            throw new IllegalArgumentException("Start state '" + startState + "' is not defined in Q.");
         }
 
         return new Automaton(
@@ -140,9 +146,9 @@ public class AutomatonParser {
                 return Collections.emptySet();
             }
             return Arrays.stream(group.split(","))
-                         .map(String::trim)
-                         .filter(s -> !s.isEmpty())
-                         .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         throw new IllegalArgumentException(setName + " definition not found or is malformed.");
     }
@@ -153,8 +159,8 @@ public class AutomatonParser {
      * Epsilon symbols ("ε", "epsilon") are normalized to {@link Transition#EPSILON}.
      * Handles comments (lines starting with //) within the transition block.
      *
-     * @param content The full automaton definition text.
-     * @param definedStates The set of all defined states (Q).
+     * @param content         The full automaton definition text.
+     * @param definedStates   The set of all defined states (Q).
      * @param definedAlphabet The set of all defined alphabet symbols (∑).
      * @return A set of structured {@link Transition} objects.
      * @throws IllegalArgumentException If transitions are malformed, use undefined states/symbols, or if the transition block contains errors.
@@ -170,12 +176,12 @@ public class AutomatonParser {
             }
 
             String cleanedContent = Arrays.stream(transitionsBlockInnerContent.split("\\R"))
-                .map(line -> {
-                    int commentStart = line.indexOf("//");
-                    return (commentStart != -1) ? line.substring(0, commentStart).trim() : line.trim();
-                })
-                .filter(line -> !line.isEmpty())
-                .collect(Collectors.joining("\n"));
+                    .map(line -> {
+                        int commentStart = line.indexOf("//");
+                        return (commentStart != -1) ? line.substring(0, commentStart).trim() : line.trim();
+                    })
+                    .filter(line -> !line.isEmpty())
+                    .collect(Collectors.joining("\n"));
 
             if (cleanedContent.isEmpty()) {
                 return Collections.emptySet();
@@ -190,8 +196,8 @@ public class AutomatonParser {
                     String gap = cleanedContent.substring(lastMatchEnd, transitionMatcher.start()).trim();
                     if (!gap.isEmpty()) {
                         throw new IllegalArgumentException(
-                            "Malformed transition definition or unexpected characters '" + gap +
-                            "' found in transitions block before '" + transitionMatcher.group(0) + "'.");
+                                "Malformed transition definition or unexpected characters '" + gap +
+                                        "' found in transitions block before '" + transitionMatcher.group(0) + "'.");
                     }
                 }
 
@@ -228,23 +234,23 @@ public class AutomatonParser {
                 String remainingContent = cleanedContent.substring(lastMatchEnd).trim();
                 if (!remainingContent.isEmpty()) {
                     throw new IllegalArgumentException(
-                        "Transition (δ or delta) block found but no valid transitions could be parsed within it, or they are malformed. Unexpected trailing content: '" + remainingContent + "'");
+                            "Transition (δ or delta) block found but no valid transitions could be parsed within it, or they are malformed. Unexpected trailing content: '" + remainingContent + "'");
                 }
             }
 
             if (!foundAtLeastOneTransition && !cleanedContent.isEmpty()) {
-                 throw new IllegalArgumentException(
-                    "Transition (δ or delta) block has content that is not solely comments, but no valid transitions could be parsed. Content: '" +
-                    cleanedContent + "'");
+                throw new IllegalArgumentException(
+                        "Transition (δ or delta) block has content that is not solely comments, but no valid transitions could be parsed. Content: '" +
+                                cleanedContent + "'");
             }
 
         } else {
             Pattern keywordDeltaPattern = Pattern.compile("\\bdelta\\b", Pattern.CASE_INSENSITIVE);
             if (content.contains("δ") || keywordDeltaPattern.matcher(content).find()) {
-                 throw new IllegalArgumentException(
-                    "Transition (δ or delta) keyword found, but transitions are not correctly " +
-                    "enclosed in a 'delta = { ... }' or 'δ = { ... }' block. " +
-                    "Please use the format 'delta = { (q0,a)=q1, ... }'.");
+                throw new IllegalArgumentException(
+                        "Transition (δ or delta) keyword found, but transitions are not correctly " +
+                                "enclosed in a 'delta = { ... }' or 'δ = { ... }' block. " +
+                                "Please use the format 'delta = { (q0,a)=q1, ... }'.");
             }
         }
         return transitions;

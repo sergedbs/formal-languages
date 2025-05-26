@@ -7,50 +7,6 @@ import java.util.List;
 
 public class Parser {
 
-    public interface RegexNode {}
-    public record LiteralNode(String value) implements RegexNode {
-        @Override
-        public String toString() { return value; }
-    }
-    public record ConcatNode(RegexNode left, RegexNode right) implements RegexNode {
-        @Override
-        public String toString() { return String.format("(%s%s)", left, right); }
-    }
-    public record OrNode(RegexNode left, RegexNode right) implements RegexNode {
-        @Override
-        public String toString() { return String.format("(%s|%s)", left, right); }
-    }
-    public record StarNode(RegexNode operand) implements RegexNode { 
-        @Override
-        public String toString() { return String.format("(%s)*", operand); }
-    }
-    public record PlusNode(RegexNode operand) implements RegexNode { 
-        @Override
-        public String toString() { return String.format("(%s)+", operand); }
-    }
-    public record QuestionNode(RegexNode operand) implements RegexNode { 
-        @Override
-        public String toString() { return String.format("(%s)?", operand); }
-    }
-    public record RepetitionNode(RegexNode operand, int minOccurrences, Integer maxOccurrences) implements RegexNode { 
-        @Override
-        public String toString() {
-            if (maxOccurrences == null) {
-                return String.format("(%s){%d,}", operand, minOccurrences);
-            }
-            if (minOccurrences == maxOccurrences) {
-                return String.format("(%s){%d}", operand, minOccurrences);
-            }
-            return String.format("(%s){%d,%d}", operand, minOccurrences, maxOccurrences);
-        }
-    }
-
-    public static class ParseException extends RuntimeException {
-        public ParseException(String message) {
-            super(message);
-        }
-    }
-
     private final List<Token> tokens;
     private int current = 0;
 
@@ -126,7 +82,7 @@ public class Parser {
                 throw new ParseException(String.format("Invalid repetition range: min %d cannot be greater than max %d.", min, max));
             }
             if (min < 0) { // Max can't be negative if min isn't, and min > max is checked.
-                 throw new ParseException(String.format("Repetition count cannot be negative: %d.", min));
+                throw new ParseException(String.format("Repetition count cannot be negative: %d.", min));
             }
             node = new RepetitionNode(node, min, max);
         }
@@ -191,5 +147,69 @@ public class Parser {
             return advance();
         }
         throw new ParseException(message + " Found " + peek().type() + " with value '" + peek().value() + "' instead.");
+    }
+
+    public interface RegexNode {
+    }
+
+    public record LiteralNode(String value) implements RegexNode {
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    public record ConcatNode(RegexNode left, RegexNode right) implements RegexNode {
+        @Override
+        public String toString() {
+            return String.format("(%s%s)", left, right);
+        }
+    }
+
+    public record OrNode(RegexNode left, RegexNode right) implements RegexNode {
+        @Override
+        public String toString() {
+            return String.format("(%s|%s)", left, right);
+        }
+    }
+
+    public record StarNode(RegexNode operand) implements RegexNode {
+        @Override
+        public String toString() {
+            return String.format("(%s)*", operand);
+        }
+    }
+
+    public record PlusNode(RegexNode operand) implements RegexNode {
+        @Override
+        public String toString() {
+            return String.format("(%s)+", operand);
+        }
+    }
+
+    public record QuestionNode(RegexNode operand) implements RegexNode {
+        @Override
+        public String toString() {
+            return String.format("(%s)?", operand);
+        }
+    }
+
+    public record RepetitionNode(RegexNode operand, int minOccurrences, Integer maxOccurrences) implements RegexNode {
+        @Override
+        public String toString() {
+            if (maxOccurrences == null) {
+                return String.format("(%s){%d,}", operand, minOccurrences);
+            }
+            if (minOccurrences == maxOccurrences) {
+                return String.format("(%s){%d}", operand, minOccurrences);
+            }
+            return String.format("(%s){%d,%d}", operand, minOccurrences, maxOccurrences);
+        }
+    }
+
+    public static class ParseException extends RuntimeException {
+        public ParseException(String message) {
+            super(message);
+        }
     }
 }

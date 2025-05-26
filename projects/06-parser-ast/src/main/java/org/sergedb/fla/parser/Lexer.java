@@ -9,12 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Lexer {
-    private final String source;
-    private final List<Token> tokens = new ArrayList<>();
-    private int start = 0;
-    private int current = 0;
-    private int line = 1;
-
     private static final Pattern P_SIN = Pattern.compile("\\bsin\\b");
     private static final Pattern P_COS = Pattern.compile("\\bcos\\b");
     private static final Pattern P_TAN = Pattern.compile("\\btan\\b");
@@ -27,6 +21,11 @@ public class Lexer {
     private static final Pattern P_RPAREN = Pattern.compile("\\)");
     private static final Pattern P_WHITESPACE = Pattern.compile("[ \\t\\r]+");
     private static final Pattern P_NEWLINE = Pattern.compile("\\n");
+    private final String source;
+    private final List<Token> tokens = new ArrayList<>();
+    private int start = 0;
+    private int current = 0;
+    private int line = 1;
 
     public Lexer(String source) {
         this.source = source;
@@ -54,7 +53,7 @@ public class Lexer {
 
         if (matchAndConsume(P_WHITESPACE)) {
             // Ignore whitespace
-            return; 
+            return;
         }
 
         if (matchAndConsume(P_SIN)) {
@@ -80,7 +79,7 @@ public class Lexer {
         } else {
             if (!isAtEnd()) {
                 char unknownChar = source.charAt(current);
-                current++; 
+                current++;
                 addToken(TokenType.UNKNOWN, String.valueOf(unknownChar));
             }
         }

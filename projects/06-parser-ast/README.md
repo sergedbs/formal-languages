@@ -2,28 +2,44 @@
 
 ## Theory
 
-Parsing, also known as syntactic analysis, is the process of analyzing a string of symbols—either in natural language, computer languages, or data structures—conforming to the rules of a formal grammar. The parser's main role is to determine the syntactic structure of the input. This structure is often represented as a parse tree or, more commonly in compilers, an Abstract Syntax Tree (AST).
+Parsing, also known as syntactic analysis, is the process of analyzing a string of symbols—either in natural language,
+computer languages, or data structures—conforming to the rules of a formal grammar. The parser's main role is to
+determine the syntactic structure of the input. This structure is often represented as a parse tree or, more commonly in
+compilers, an Abstract Syntax Tree (AST).
 
-An Abstract Syntax Tree (AST) is a tree representation of the abstract syntactic structure of source code written in a programming language or other formal language. Each node of the tree denotes a construct occurring in the source code. The syntax is "abstract" in the sense that it does not represent every detail appearing in the real syntax, but rather just the structural or content-related details. ASTs are widely used in compilers and interpreters to represent the program's structure after the initial parsing phase, facilitating semantic analysis, code generation, and optimization.
+An Abstract Syntax Tree (AST) is a tree representation of the abstract syntactic structure of source code written in a
+programming language or other formal language. Each node of the tree denotes a construct occurring in the source code.
+The syntax is "abstract" in the sense that it does not represent every detail appearing in the real syntax, but rather
+just the structural or content-related details. ASTs are widely used in compilers and interpreters to represent the
+program's structure after the initial parsing phase, facilitating semantic analysis, code generation, and optimization.
 
-This project focuses on implementing a lexer to tokenize mathematical expressions and a parser to construct an AST from these tokens. The expressions can include numbers, basic arithmetic operations (+, -, *, /), and trigonometric functions (sin, cos, tan) with parentheses for grouping.
+This project focuses on implementing a lexer to tokenize mathematical expressions and a parser to construct an AST from
+these tokens. The expressions can include numbers, basic arithmetic operations (+, -, *, /), and trigonometric
+functions (sin, cos, tan) with parentheses for grouping.
 
 ## Objectives
 
 1. Get familiar with parsing, what it is and how it can be programmed.
 2. Get familiar with the concept of AST.
 3. In addition to what has been done in the 3rd lab work (Lexer/Scanner), do the following:
-   1. Have a type `TokenType` (like an enum) that can be used in the lexical analysis to categorize the tokens. Use regular expressions to identify the type of the token.
-   2. Implement the necessary data structures for an AST that could be used for the text processed.
-   3. Implement a simple parser program that could extract the syntactic information from the input text and build the AST.
+    1. Have a type `TokenType` (like an enum) that can be used in the lexical analysis to categorize the tokens. Use
+       regular expressions to identify the type of the token.
+    2. Implement the necessary data structures for an AST that could be used for the text processed.
+    3. Implement a simple parser program that could extract the syntactic information from the input text and build the
+       AST.
 
 ## Features
 
-* **Lexical Analysis**: Converts an input mathematical expression string into a sequence of tokens using regular expressions. Recognizes numbers, operators (+, -, *, /), functions (sin, cos, tan), and parentheses.
-* **Syntactic Analysis (Parsing)**: Parses the sequence of tokens to validate the expression's syntax according to a defined grammar (recursive descent parser).
-* **AST Construction**: Builds an Abstract Syntax Tree representing the hierarchical structure of the parsed mathematical expression.
-* **Expression Evaluation Support**: The AST structure is suitable for future extensions like expression evaluation or code generation.
-* **Error Handling**: Basic error reporting for lexical and parsing errors, indicating the problematic token and its location.
+* **Lexical Analysis**: Converts an input mathematical expression string into a sequence of tokens using regular
+  expressions. Recognizes numbers, operators (+, -, *, /), functions (sin, cos, tan), and parentheses.
+* **Syntactic Analysis (Parsing)**: Parses the sequence of tokens to validate the expression's syntax according to a
+  defined grammar (recursive descent parser).
+* **AST Construction**: Builds an Abstract Syntax Tree representing the hierarchical structure of the parsed
+  mathematical expression.
+* **Expression Evaluation Support**: The AST structure is suitable for future extensions like expression evaluation or
+  code generation.
+* **Error Handling**: Basic error reporting for lexical and parsing errors, indicating the problematic token and its
+  location.
 * **Interactive Input**: Allows users to input mathematical expressions directly into the console.
 * **AST Visualization**: Prints a tree-like representation of the constructed AST to the console.
 
@@ -31,7 +47,8 @@ This project focuses on implementing a lexer to tokenize mathematical expression
 
 The project is implemented in Java and consists of several key components:
 
-* **`Main.java`**: The entry point of the application. It handles user input, orchestrates the lexing and parsing process, and initiates the printing of the AST.
+* **`Main.java`**: The entry point of the application. It handles user input, orchestrates the lexing and parsing
+  process, and initiates the printing of the AST.
 
   ```java
   // Snippet from Main.java
@@ -57,7 +74,9 @@ The project is implemented in Java and consists of several key components:
   }
   ```
 
-* **`Lexer.java`**: Responsible for lexical analysis. It takes the raw input string and breaks it down into a list of `Token` objects. Regular expressions are used to identify different token types such as numbers, operators, functions, and parentheses. It also handles whitespace and newlines.
+* **`Lexer.java`**: Responsible for lexical analysis. It takes the raw input string and breaks it down into a list of
+  `Token` objects. Regular expressions are used to identify different token types such as numbers, operators, functions,
+  and parentheses. It also handles whitespace and newlines.
 
   ```java
   // Snippet from Lexer.java - scanToken logic
@@ -76,7 +95,9 @@ The project is implemented in Java and consists of several key components:
   }
   ```
 
-* **`Parser.java`**: Implements a recursive descent parser. It takes the list of tokens generated by the `Lexer` and attempts to build an `ASTNode` tree according to the grammar rules for mathematical expressions. It handles operator precedence (multiplication/division before addition/subtraction), parentheses, unary minus, and function calls.
+* **`Parser.java`**: Implements a recursive descent parser. It takes the list of tokens generated by the `Lexer` and
+  attempts to build an `ASTNode` tree according to the grammar rules for mathematical expressions. It handles operator
+  precedence (multiplication/division before addition/subtraction), parentheses, unary minus, and function calls.
 
   ```java
   // Snippet from Parser.java - parseExpression logic
@@ -96,13 +117,18 @@ The project is implemented in Java and consists of several key components:
   }
   ```
 
-* **`model/ASTNode.java`**: Defines the structure of a node in the Abstract Syntax Tree. Each node has a `NodeType` (e.g., `NUMBER`, `BINARY_OPERATION`, `FUNCTION_CALL`), a `value` (e.g., the number itself, the operator symbol, the function name), and a list of children nodes. It also includes a `print` method for visualizing the tree structure.
+* **`model/ASTNode.java`**: Defines the structure of a node in the Abstract Syntax Tree. Each node has a `NodeType` (
+  e.g., `NUMBER`, `BINARY_OPERATION`, `FUNCTION_CALL`), a `value` (e.g., the number itself, the operator symbol, the
+  function name), and a list of children nodes. It also includes a `print` method for visualizing the tree structure.
 
-* **`model/Token.java`**: A record representing a token, containing its `TokenType`, the original `lexeme` (string value), an optional `literal` value (e.g., the double value of a number), and the `line` number where it appeared.
+* **`model/Token.java`**: A record representing a token, containing its `TokenType`, the original `lexeme` (string
+  value), an optional `literal` value (e.g., the double value of a number), and the `line` number where it appeared.
 
-* **`model/TokenType.java`**: An enum defining all possible types of tokens that the lexer can produce (e.g., `NUMBER`, `PLUS`, `MINUS`, `SIN`, `LPAREN`, `EOF`).
+* **`model/TokenType.java`**: An enum defining all possible types of tokens that the lexer can produce (e.g., `NUMBER`,
+  `PLUS`, `MINUS`, `SIN`, `LPAREN`, `EOF`).
 
-* **`model/NodeType.java`**: An enum defining the types of nodes in the AST (e.g., `NUMBER`, `BINARY_OPERATION`, `UNARY_OPERATION`, `FUNCTION_CALL`).
+* **`model/NodeType.java`**: An enum defining the types of nodes in the AST (e.g., `NUMBER`, `BINARY_OPERATION`,
+  `UNARY_OPERATION`, `FUNCTION_CALL`).
 
 ## Supported Expression Format
 
@@ -119,8 +145,12 @@ The parser accepts mathematical expressions involving:
 
 `cos(1.5 * (2 + tan(0.5))) - sin(4 - 1) / 3`
 
-This expression will be tokenized, parsed, and an AST representing its structure will be generated and printed to the console.
+This expression will be tokenized, parsed, and an AST representing its structure will be generated and printed to the
+console.
 
 ## Conclusion
 
-This project successfully demonstrates the process of lexical analysis and syntactic parsing for a defined subset of mathematical expressions. By implementing a lexer that tokenizes the input using regular expressions and a recursive descent parser that constructs an Abstract Syntax Tree (AST), we can effectively represent the structure and hierarchy of these expressions.
+This project successfully demonstrates the process of lexical analysis and syntactic parsing for a defined subset of
+mathematical expressions. By implementing a lexer that tokenizes the input using regular expressions and a recursive
+descent parser that constructs an Abstract Syntax Tree (AST), we can effectively represent the structure and hierarchy
+of these expressions.

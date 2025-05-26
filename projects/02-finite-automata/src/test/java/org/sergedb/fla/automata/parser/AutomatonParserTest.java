@@ -8,13 +8,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.HashSet; // For sets of transitions
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AutomatonParserTest {
 
@@ -51,7 +48,7 @@ public class AutomatonParserTest {
         expectedTransitions.add(new Transition("q1", "q2", "c"));
         expectedTransitions.add(new Transition("q2", "q0", "a"));
         expectedTransitions.add(new Transition("q1", "q1", "a"));
-        
+
         assertEquals(expectedTransitions, fa.transitions());
     }
 
@@ -71,7 +68,7 @@ public class AutomatonParserTest {
         assertEquals(Set.of("a"), fa.alphabet());
         assertEquals("q0", fa.initialState());
         assertTrue(fa.finalStates().isEmpty());
-        
+
         Set<Transition> expectedTransitions = new HashSet<>();
         expectedTransitions.add(new Transition("q0", "q1", "a"));
         assertEquals(expectedTransitions, fa.transitions());
@@ -93,10 +90,10 @@ public class AutomatonParserTest {
         assertEquals(Set.of("q0"), fa.finalStates());
         assertTrue(fa.transitions().isEmpty());
     }
-    
+
     @Test
     public void testParseWithSigmaSymbolAndDifferentSpacing() {
-         String automatonDefinition = """
+        String automatonDefinition = """
                 Q = {s1, s2}
                 Sigma = {0,1}
                 F = {s2}
@@ -159,14 +156,14 @@ public class AutomatonParserTest {
         });
         assertTrue(exception.getMessage().contains("Final States (F) definition not found"));
     }
-    
+
     @Test
     public void testTransitionWithUndefinedState() {
-        String automatonDefinition = 
+        String automatonDefinition =
                 "Q = {q0}\n" +
-                "∑ = {a}\n" +
-                "F = {q0}\n" +
-                "delta = { (q0,a) = q1 }"; // q1 is not in Q
+                        "∑ = {a}\n" +
+                        "F = {q0}\n" +
+                        "delta = { (q0,a) = q1 }"; // q1 is not in Q
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             parser.parseFromString(automatonDefinition);
@@ -187,7 +184,7 @@ public class AutomatonParserTest {
         });
         assertTrue(exception.getMessage().contains("Transition error: Symbol 'b'"));
     }
-    
+
     @Test
     public void testMalformedTransitionBlock() {
         String automatonDefinition = """
@@ -224,7 +221,7 @@ public class AutomatonParserTest {
                 ∑ = {a}
                 F = {q0}
                 delta = {
-                         
+                
                 }
                 """;
         Automaton fa = parser.parseFromString(automatonDefinition);
@@ -325,7 +322,7 @@ public class AutomatonParserTest {
         expectedTransitions.add(new Transition("q1", "q2", "c"));
         expectedTransitions.add(new Transition("q2", "q0", "a"));
         expectedTransitions.add(new Transition("q1", "q1", "a"));
-        
+
         assertEquals(expectedTransitions, fa.transitions());
     }
 }

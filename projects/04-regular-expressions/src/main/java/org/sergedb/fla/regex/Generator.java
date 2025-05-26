@@ -1,21 +1,21 @@
 package org.sergedb.fla.regex;
 
-import org.sergedb.fla.regex.Parser.*; 
+import org.sergedb.fla.regex.Parser.*;
 
 import java.util.*;
 
 public class Generator {
     private final Random random;
-    private final int maxIterations; 
+    private final int maxIterations;
     private final Map<String, List<String>> allProcessingSteps;
 
     public Generator() {
-        this(5); 
+        this(5);
     }
 
     public Generator(int maxIterations) {
         this.random = new Random();
-        this.maxIterations = Math.max(1, maxIterations); 
+        this.maxIterations = Math.max(1, maxIterations);
         this.allProcessingSteps = new LinkedHashMap<>();
     }
 
@@ -26,17 +26,17 @@ public class Generator {
         Set<String> generatedStringsSet = new HashSet<>();
         allProcessingSteps.clear();
 
-        
+
         for (int i = 0; i < count * 5 && generatedStringsSet.size() < count; i++) {
             List<String> currentSteps = new ArrayList<>();
             String generatedString = generateRecursive(astRoot, currentSteps);
             if (!generatedString.isEmpty()) {
-                 if(generatedStringsSet.add(generatedString)) {
+                if (generatedStringsSet.add(generatedString)) {
                     allProcessingSteps.put(generatedString, currentSteps);
-                 }
+                }
             } else if (generatedString != null) {
                 if (generatedStringsSet.add("")) {
-                     allProcessingSteps.put("", currentSteps);
+                    allProcessingSteps.put("", currentSteps);
                 }
             }
         }
@@ -123,7 +123,7 @@ public class Generator {
                 }
                 repetitionType = "{" + min + "," + max + "}";
             }
-            
+
             repetitions = Math.max(0, repetitions); // Ensure repetitions is not negative
 
             addStep("Processing REPETITION " + repetitionType + " quantifier for: " + repNode.operand() + ". Repeating " + repetitions + " times.", currentGenerationSteps);

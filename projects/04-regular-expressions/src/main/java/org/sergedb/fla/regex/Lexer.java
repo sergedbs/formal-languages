@@ -73,16 +73,16 @@ public class Lexer {
                     break;
             }
         }
-        tokens.add(new Token(TokenType.EOL, "")); 
+        tokens.add(new Token(TokenType.EOL, ""));
         return tokens;
     }
 
     private TokenType getLastSignificantTokenType(List<Token> tokens) {
         for (int i = tokens.size() - 1; i >= 0; i--) {
-            if (tokens.get(i).type() != TokenType.EOL) { 
+            if (tokens.get(i).type() != TokenType.EOL) {
                 return tokens.get(i).type();
             }
         }
-        return null; 
+        return null;
     }
 }

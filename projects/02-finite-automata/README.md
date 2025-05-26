@@ -2,7 +2,10 @@
 
 ## Theory
 
-Finite automata are abstract computational models used to recognize patterns within input strings. They consist of states, transitions, and an initial state, and can be deterministic (DFA) or non-deterministic (NDFA). Finite automata are widely used in lexical analysis, text processing, and formal language theory. They are closely related to regular grammars, as every regular language can be represented by a finite automaton.
+Finite automata are abstract computational models used to recognize patterns within input strings. They consist of
+states, transitions, and an initial state, and can be deterministic (DFA) or non-deterministic (NDFA). Finite automata
+are widely used in lexical analysis, text processing, and formal language theory. They are closely related to regular
+grammars, as every regular language can be represented by a finite automaton.
 
 ## Objectives
 
@@ -22,13 +25,17 @@ Finite automata are abstract computational models used to recognize patterns wit
 
 ## Implementation description
 
-* **Automaton Parsing**: The `AutomatonParser` class parses automaton definitions from a file or string. It validates the components and constructs an `Automaton` object.
+* **Automaton Parsing**: The `AutomatonParser` class parses automaton definitions from a file or string. It validates
+  the components and constructs an `Automaton` object.
 
-* **NDFA to DFA Conversion**: The `AutomatonProcessor` class implements the conversion of non-deterministic finite automata to deterministic finite automata using epsilon-closure and state transitions.
+* **NDFA to DFA Conversion**: The `AutomatonProcessor` class implements the conversion of non-deterministic finite
+  automata to deterministic finite automata using epsilon-closure and state transitions.
 
-* **Automaton to Grammar Conversion**: The `AutomatonProcessor` class also converts finite automata into equivalent regular grammars by mapping states and transitions to production rules.
+* **Automaton to Grammar Conversion**: The `AutomatonProcessor` class also converts finite automata into equivalent
+  regular grammars by mapping states and transitions to production rules.
 
-* **Interactive Mode**: The `Runner` class provides a console-based interface for parsing, converting, and analyzing automata.
+* **Interactive Mode**: The `Runner` class provides a console-based interface for parsing, converting, and analyzing
+  automata.
 
 ## Example Usage
 
@@ -55,4 +62,6 @@ Finite automata are abstract computational models used to recognize patterns wit
 
 ## Conclusion
 
-This project demonstrates the practical applications of finite automata in formal language theory and computational models. By parsing, analyzing, and converting automata, it bridges the gap between theoretical concepts and real-world implementations, providing a solid foundation for further exploration in automata theory and its applications.
+This project demonstrates the practical applications of finite automata in formal language theory and computational
+models. By parsing, analyzing, and converting automata, it bridges the gap between theoretical concepts and real-world
+implementations, providing a solid foundation for further exploration in automata theory and its applications.

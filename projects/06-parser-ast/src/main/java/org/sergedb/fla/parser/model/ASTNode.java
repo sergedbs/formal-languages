@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTNode {
-    private NodeType type;
-    private String value;
-    private List<ASTNode> children;
+    private final NodeType type;
+    private final String value;
+    private final List<ASTNode> children;
 
     public ASTNode(NodeType type, String value) {
         this.type = type;

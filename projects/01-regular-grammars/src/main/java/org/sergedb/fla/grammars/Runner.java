@@ -69,7 +69,7 @@ public class Runner {
             System.out.print("\nDo you want to test your own strings? (y/n): ");
             try (Scanner scanner = new Scanner(System.in)) {
                 String response = scanner.nextLine().trim().toLowerCase();
-                
+
                 if (response.equals("y") || response.equals("yes")) {
                     StringTester tester = new StringTester(automaton);
                     tester.startInteractiveMode();
@@ -88,7 +88,7 @@ public class Runner {
      * Generates a specified number of strings using the grammar processor.
      *
      * @param processor the grammar processor
-     * @param count number of strings to generate
+     * @param count     number of strings to generate
      * @return list of generated strings
      */
     private List<String> generateStrings(GrammarProcessor processor, int count) {

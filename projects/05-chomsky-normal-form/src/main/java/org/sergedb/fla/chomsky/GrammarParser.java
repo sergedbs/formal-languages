@@ -43,7 +43,7 @@ public class GrammarParser {
      *
      * @param filePath Path to the file containing the grammar definition
      * @return A structured {@link Grammar} object representing the parsed grammar
-     * @throws IOException If the file cannot be read
+     * @throws IOException              If the file cannot be read
      * @throws IllegalArgumentException If the grammar definition is invalid
      */
     public Grammar parseFromFile(Path filePath) throws IOException {
@@ -100,7 +100,7 @@ public class GrammarParser {
     /**
      * Builds a mapping from symbol values to their types.
      *
-     * @param terminals Set of terminal symbols
+     * @param terminals    Set of terminal symbols
      * @param nonTerminals Set of non-terminal symbols
      * @return Map of symbol values to their types
      */
@@ -136,7 +136,7 @@ public class GrammarParser {
     /**
      * Extracts and parses production rules from the grammar definition.
      *
-     * @param content The full grammar definition text
+     * @param content       The full grammar definition text
      * @param symbolTypeMap Map of symbols to their types for classification
      * @return A set of structured {@link Production} objects
      * @throws IllegalArgumentException If a rule has invalid format or contains undefined symbols
@@ -189,7 +189,7 @@ public class GrammarParser {
     /**
      * Tokenizes the right-hand side of a production rule into individual symbols.
      *
-     * @param rhs The right-hand side string of a production rule
+     * @param rhs           The right-hand side string of a production rule
      * @param symbolTypeMap Map of symbols to their types for classification
      * @return Ordered list of {@link ProductionSymbol} objects representing the RHS
      * @throws IllegalArgumentException If an undefined symbol is encountered

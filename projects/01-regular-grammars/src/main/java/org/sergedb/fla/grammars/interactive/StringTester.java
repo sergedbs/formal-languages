@@ -20,9 +20,9 @@ import java.util.Scanner;
  * The user can exit the interactive mode by entering "exit;" as input.
  */
 public class StringTester {
+    private static final String EXIT_COMMAND = "exit;";
     private final FiniteAutomaton automaton;
     private final Scanner scanner;
-    private static final String EXIT_COMMAND = "exit;";
 
     /**
      * Creates a new string tester for the given automaton.
@@ -43,16 +43,16 @@ public class StringTester {
     public void startInteractiveMode() {
         System.out.println("\n=== Interactive String Testing Mode ===");
         System.out.println("Enter strings to test or '" + EXIT_COMMAND + "' to quit");
-        
+
         while (true) {
             System.out.print("\nEnter a string: ");
             String input = scanner.nextLine().trim();
-            
+
             if (input.equalsIgnoreCase(EXIT_COMMAND)) {
                 System.out.println("Exiting interactive mode");
                 break;
             }
-            
+
             testStringWithTracing(input);
         }
     }
@@ -67,47 +67,47 @@ public class StringTester {
             System.out.println("Empty string provided");
             return;
         }
-        
+
         System.out.println("\nProcessing string: \"" + input + "\"");
         System.out.println("Starting state: " + automaton.getStartState());
-        
+
         String currentState = automaton.getStartState();
         boolean accepted = true;
         List<TransitionStep> steps = new ArrayList<>();
-        
+
         // Process each character and record transitions
         for (int i = 0; i < input.length(); i++) {
             String symbol = String.valueOf(input.charAt(i));
-            
+
             TransitionResult result = processTransition(currentState, symbol);
             steps.add(new TransitionStep(i, currentState, symbol, result));
-            
+
             if (!result.isValid()) {
                 accepted = false;
                 break;
             }
-            
+
             currentState = result.nextState();
         }
-        
+
         // Print transition table
         printTransitionTable(steps);
-        
+
         // Final acceptance check
         if (accepted && !automaton.getFinalStates().contains(currentState)) {
             accepted = false;
             System.out.println("Stopped in non-final state: " + currentState);
         }
-        
+
         // Print final result
-        System.out.println("\nResult: String \"" + input + "\" is " + 
+        System.out.println("\nResult: String \"" + input + "\" is " +
                 (accepted ? "ACCEPTED" : "REJECTED") + " by the automaton");
     }
-    
+
     /**
      * Processes a single transition step.
      *
-     * @param state Current state
+     * @param state  Current state
      * @param symbol Input symbol
      * @return Transition result containing validity and next state
      */
@@ -116,27 +116,27 @@ public class StringTester {
         if (!automaton.getAlphabet().contains(symbol)) {
             return new TransitionResult(false, null, "Symbol not in alphabet");
         }
-        
+
         // Get transitions map for state
         Map<String, String> transitions = getTransitionsForState(state);
-        
+
         // Check if transition exists
         if (transitions == null || !transitions.containsKey(symbol)) {
             return new TransitionResult(false, null, "No transition defined");
         }
-        
+
         // Return next state
         String nextState = transitions.get(symbol);
         return new TransitionResult(true, nextState, "Transition found");
     }
-    
+
     /**
      * Gets the transition map for a specific state.
      * <p>
      * This is a workaround since we don't have direct access to the transition
      * function in FiniteAutomaton. In a production system, this would be replaced
      * with a proper accessor method in FiniteAutomaton.
-     * 
+     *
      * @param state The state to get transitions for
      * @return Map of transitions or null if not found
      */
@@ -145,7 +145,7 @@ public class StringTester {
         // In a production system, FiniteAutomaton should provide a getter for this
         return automaton.getTransitionMapForState(state);
     }
-    
+
     /**
      * Prints a formatted table of transition steps.
      *
@@ -156,12 +156,12 @@ public class StringTester {
         System.out.println("+---------+--------------+---------+--------------+------------------+");
         System.out.println("| Step    | Current State| Symbol  | Next State   | Status           |");
         System.out.println("+---------+--------------+---------+--------------+------------------+");
-        
+
         for (TransitionStep step : steps) {
             TransitionResult result = step.result();
             String nextState = result.isValid() ? result.nextState() : "ERROR";
             String status = result.isValid() ? "Valid" : "Invalid: " + result.message();
-            
+
             System.out.printf("| %-7d | %-12s | %-7s | %-12s | %-16s |%n",
                     step.position() + 1,
                     step.state(),
@@ -169,7 +169,7 @@ public class StringTester {
                     nextState,
                     status);
         }
-        
+
         System.out.println("+---------+--------------+---------+--------------+------------------+");
     }
 }

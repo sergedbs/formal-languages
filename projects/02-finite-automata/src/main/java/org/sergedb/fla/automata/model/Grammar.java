@@ -37,8 +37,8 @@ public record Grammar(
             // Type 3: Regular Grammar
             // Each production is of the form A -> aB or A -> a (A is non-terminal, a is terminal, B is non-terminal or empty)
             return rule.left().length() == 1 &&
-                   nonTerminals.contains(rule.left()) &&
-                   rule.right().stream().allMatch(symbol -> terminals.contains(symbol.value()) || nonTerminals.contains(symbol.value()));
+                    nonTerminals.contains(rule.left()) &&
+                    rule.right().stream().allMatch(symbol -> terminals.contains(symbol.value()) || nonTerminals.contains(symbol.value()));
         });
 
         if (isType3) {
@@ -49,7 +49,7 @@ public record Grammar(
             // Type 2: Context-Free Grammar
             // Each production is of the form A -> α (A is a single non-terminal, α is a string of terminals and/or non-terminals)
             return rule.left().length() == 1 &&
-                   nonTerminals.contains(rule.left());
+                    nonTerminals.contains(rule.left());
         });
 
         if (isType2) {

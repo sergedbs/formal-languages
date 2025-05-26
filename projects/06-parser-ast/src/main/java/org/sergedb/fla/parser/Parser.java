@@ -24,7 +24,7 @@ public class Parser {
         if (lastToken.type() == TokenType.EOF) {
             return lastToken;
         }
-        return new Token(TokenType.EOF, "", null, 0); 
+        return new Token(TokenType.EOF, "", null, 0);
     }
 
     private void advance() {
@@ -46,7 +46,7 @@ public class Parser {
         ASTNode node = parseTerm();
 
         while (getCurrentToken().type() == TokenType.PLUS ||
-               getCurrentToken().type() == TokenType.MINUS) {
+                getCurrentToken().type() == TokenType.MINUS) {
             Token operatorToken = getCurrentToken();
             advance();
             ASTNode right = parseTerm();
@@ -64,7 +64,7 @@ public class Parser {
         ASTNode node = parseFactor();
 
         while (getCurrentToken().type() == TokenType.MULTIPLY ||
-               getCurrentToken().type() == TokenType.DIVIDE) {
+                getCurrentToken().type() == TokenType.DIVIDE) {
             Token operatorToken = getCurrentToken();
             advance();
             ASTNode right = parseFactor();
@@ -97,14 +97,14 @@ public class Parser {
             ASTNode node = parseExpression();
             expect(TokenType.RPAREN);
             return node;
-        } else if (token.type() == TokenType.MINUS) { 
+        } else if (token.type() == TokenType.MINUS) {
             Token operatorToken = token;
             advance();
             ASTNode operand = parseFactor();
             ASTNode unaryNode = new ASTNode(NodeType.UNARY_OPERATION, operatorToken.lexeme());
             unaryNode.addChild(operand);
             return unaryNode;
-        }else {
+        } else {
             throw new ParseException("Unexpected token: " + token.lexeme() + " of type " + token.type(), token);
         }
     }
