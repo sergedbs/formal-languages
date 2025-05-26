@@ -7,7 +7,7 @@ import java.util.*;
 public class Generator {
     private final Random random;
     private final int maxIterations; 
-    private Map<String, List<String>> allProcessingSteps;
+    private final Map<String, List<String>> allProcessingSteps;
 
     public Generator() {
         this(5); 
@@ -30,11 +30,11 @@ public class Generator {
         for (int i = 0; i < count * 5 && generatedStringsSet.size() < count; i++) {
             List<String> currentSteps = new ArrayList<>();
             String generatedString = generateRecursive(astRoot, currentSteps);
-            if (generatedString != null && !generatedString.isEmpty()) { 
+            if (!generatedString.isEmpty()) {
                  if(generatedStringsSet.add(generatedString)) {
                     allProcessingSteps.put(generatedString, currentSteps);
                  }
-            } else if (generatedString != null && generatedString.isEmpty()) {
+            } else if (generatedString != null) {
                 if (generatedStringsSet.add("")) {
                      allProcessingSteps.put("", currentSteps);
                 }
@@ -111,15 +111,15 @@ public class Generator {
             if (max == null) { // {min,}
                 repetitions = min + random.nextInt(maxIterations + 1); // min or more
                 repetitionType = "{" + min + ",}";
-            } else if (min == max.intValue()) { // {min} or {n}
+            } else if (min == max) { // {min} or {n}
                 repetitions = min;
                 repetitionType = "{" + min + "}";
             } else { // {min,max}
-                if (min > max.intValue()) {
+                if (min > max) {
                     addStep("Warning: Min repetitions " + min + " > Max repetitions " + max + " for " + repNode.operand() + ". Using min.", currentGenerationSteps);
                     repetitions = min;
                 } else {
-                    repetitions = min + random.nextInt(max.intValue() - min + 1);
+                    repetitions = min + random.nextInt(max - min + 1);
                 }
                 repetitionType = "{" + min + "," + max + "}";
             }

@@ -4,7 +4,6 @@ import org.sergedb.fla.regex.model.Token;
 import org.sergedb.fla.regex.model.TokenType;
 
 import java.util.List;
-import java.util.ArrayList; 
 
 public class Parser {
 
@@ -39,14 +38,13 @@ public class Parser {
             if (maxOccurrences == null) {
                 return String.format("(%s){%d,}", operand, minOccurrences);
             }
-            if (minOccurrences == maxOccurrences.intValue()) {
+            if (minOccurrences == maxOccurrences) {
                 return String.format("(%s){%d}", operand, minOccurrences);
             }
             return String.format("(%s){%d,%d}", operand, minOccurrences, maxOccurrences);
         }
     }
 
-    
     public static class ParseException extends RuntimeException {
         public ParseException(String message) {
             super(message);
@@ -62,7 +60,7 @@ public class Parser {
 
     public RegexNode parse() {
         // Simplified check for empty or effectively empty token list
-        if (tokens == null || tokens.isEmpty() || (tokens.size() == 1 && tokens.get(0).type() == TokenType.EOL)) {
+        if (tokens == null || tokens.isEmpty() || (tokens.size() == 1 && tokens.getFirst().type() == TokenType.EOL)) {
             throw new ParseException("Cannot parse an empty regular expression.");
         }
         RegexNode expression = parseExpr();
@@ -82,23 +80,13 @@ public class Parser {
     }
 
     private RegexNode parseTerm() {
-        // Handle cases where a term is legitimately empty,
-        // e.g., in an OR expression like (a|) or an empty group ().
-        // If peek() is OR, it means the left side of OR was parsed, and now we are parsing the right side which is empty.
-        // If peek() is CLOSE_PAREN, it means we are inside a group like () or (expr|).
-        // If isAtEnd(), it means an expression like "a|" where the part after | is missing at the end of regex.
         if (check(TokenType.OR) || check(TokenType.CLOSE_PAREN) || isAtEnd()) {
             return new LiteralNode(""); // Represents an empty string (epsilon)
         }
 
         RegexNode node = parseFactor();
 
-        // Continue concatenation as long as the next token can start a new factor.
-        // A factor can start with a LITERAL, a NUMBER (which parseAtom treats as a literal), or an OPEN_PAREN.
         while (check(TokenType.LITERAL) || check(TokenType.NUMBER) || check(TokenType.OPEN_PAREN)) {
-            // The check() conditions ensure that peek().type() is one of LITERAL, NUMBER, or OPEN_PAREN.
-            // These are distinct from OR, CLOSE_PAREN, EOL, etc. So, no need for an explicit break
-            // for OR or CLOSE_PAREN here. If we are here, it's a valid start of a next factor.
             RegexNode right = parseFactor();
             node = new ConcatNode(node, right);
         }
@@ -134,7 +122,7 @@ public class Parser {
             }
             consume(TokenType.CLOSE_BRACE, "Expected '}' to close repetition quantifier, but got " + peek());
 
-            if (max != null && min > max.intValue()) {
+            if (max != null && min > max) {
                 throw new ParseException(String.format("Invalid repetition range: min %d cannot be greater than max %d.", min, max));
             }
             if (min < 0) { // Max can't be negative if min isn't, and min > max is checked.

@@ -1,4 +1,4 @@
-# Regular Grammars and Finite Automata
+# Lexer and Scanner
 
 ## Theory
 

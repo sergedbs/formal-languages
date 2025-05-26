@@ -15,21 +15,17 @@ public class Lexer {
         this.position = 0;
     }
 
-
     private char getCurrentChar() {
         return (position < input.length()) ? input.charAt(position) : '\0';
     }
-
 
     private void advance() {
         position++;
     }
 
-
     private void advance(int steps) {
         position += steps;
     }
-
 
     private String matchNumber() {
         if (position >= input.length() || !Character.isDigit(getCurrentChar())) {
@@ -66,29 +62,24 @@ public class Lexer {
         return null;
     }
 
-
     private void skipWhitespace() {
         while (position < input.length() && Character.isWhitespace(getCurrentChar())) {
             advance();
         }
     }
 
-
     public Token getNextToken() {
 
         skipWhitespace();
-
 
         if (position >= input.length()) {
             return new Token(TokenType.EOL, "");
         }
 
-
         String number = matchNumber();
         if (number != null) {
             return new Token(TokenType.NUMBER, number);
         }
-
 
         String keyword;
         if ((keyword = matchKeyword("sin")) != null) {
@@ -110,32 +101,21 @@ public class Lexer {
         char currentChar = getCurrentChar();
         advance();
 
-        switch (currentChar) {
-            case '+':
-                return new Token(TokenType.PLUS, "+");
-            case '-':
-                return new Token(TokenType.MINUS, "-");
-            case '*':
-                return new Token(TokenType.MULTIPLY, "*");
-            case '/':
-                return new Token(TokenType.DIVIDE, "/");
-            case '^':
-                return new Token(TokenType.POWER, "^");
-            case '(':
-                return new Token(TokenType.LPAREN, "(");
-            case ')':
-                return new Token(TokenType.RPAREN, ")");
-            default:
-                return new Token(TokenType.INVALID, String.valueOf(currentChar));
-        }
+        return switch (currentChar) {
+            case '+' -> new Token(TokenType.PLUS, "+");
+            case '-' -> new Token(TokenType.MINUS, "-");
+            case '*' -> new Token(TokenType.MULTIPLY, "*");
+            case '/' -> new Token(TokenType.DIVIDE, "/");
+            case '^' -> new Token(TokenType.POWER, "^");
+            case '(' -> new Token(TokenType.LPAREN, "(");
+            case ')' -> new Token(TokenType.RPAREN, ")");
+            default -> new Token(TokenType.INVALID, String.valueOf(currentChar));
+        };
     }
-
 
     public List<Token> tokenize() {
         List<Token> tokens = new ArrayList<>();
         Token token;
-
-
         position = 0;
 
         while ((token = getNextToken()).type() != TokenType.EOL) {
