@@ -1,0 +1,9 @@
+V_N={S, A, B, C, D}
+V_T={a, b}
+P={
+  S -> AC | bA | B | aA,
+  A -> ε | aS | ABab,
+  B -> a | bS,
+  C -> abC,
+  D -> AB
+}
