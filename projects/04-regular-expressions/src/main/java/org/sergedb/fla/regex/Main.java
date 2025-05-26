@@ -64,7 +64,7 @@ public class Main {
                 System.out.println("No strings were generated. The regex might be very restrictive, produce only empty string, or there could be an issue.");
                  
                 if (generator.getAllProcessingSteps().containsKey("")) {
-                    System.out.println("Generated string: \"\" (empty string)");
+                    System.out.println("Generated string: (empty string)");
                     System.out.println("Processing steps for empty string:");
                     for (String step : generator.getAllProcessingSteps().get("")) {
                         System.out.println("  - " + step);

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class Parser {
 
-    
     public interface RegexNode {}
     public record LiteralNode(String value) implements RegexNode {
         @Override
@@ -62,10 +61,9 @@ public class Parser {
     }
 
     public RegexNode parse() {
+        // Simplified check for empty or effectively empty token list
         if (tokens == null || tokens.isEmpty() || (tokens.size() == 1 && tokens.get(0).type() == TokenType.EOL)) {
-            if (tokens == null || tokens.isEmpty() || tokens.get(0).type() == TokenType.EOL) {
-                 throw new ParseException("Cannot parse an empty regular expression.");
-            }
+            throw new ParseException("Cannot parse an empty regular expression.");
         }
         RegexNode expression = parseExpr();
         if (!isAtEnd()) {
@@ -77,19 +75,30 @@ public class Parser {
     private RegexNode parseExpr() {
         RegexNode node = parseTerm();
         while (match(TokenType.OR)) {
-            RegexNode right = parseTerm();
+            RegexNode right = parseTerm(); // parseTerm will handle empty right side
             node = new OrNode(node, right);
         }
         return node;
     }
 
     private RegexNode parseTerm() {
+        // Handle cases where a term is legitimately empty,
+        // e.g., in an OR expression like (a|) or an empty group ().
+        // If peek() is OR, it means the left side of OR was parsed, and now we are parsing the right side which is empty.
+        // If peek() is CLOSE_PAREN, it means we are inside a group like () or (expr|).
+        // If isAtEnd(), it means an expression like "a|" where the part after | is missing at the end of regex.
+        if (check(TokenType.OR) || check(TokenType.CLOSE_PAREN) || isAtEnd()) {
+            return new LiteralNode(""); // Represents an empty string (epsilon)
+        }
+
         RegexNode node = parseFactor();
-        while (!isAtEnd() && (check(TokenType.LITERAL) || check(TokenType.OPEN_PAREN))) {
-            
-            if (peek().type() == TokenType.OR || peek().type() == TokenType.CLOSE_PAREN) {
-                break;
-            }
+
+        // Continue concatenation as long as the next token can start a new factor.
+        // A factor can start with a LITERAL, a NUMBER (which parseAtom treats as a literal), or an OPEN_PAREN.
+        while (check(TokenType.LITERAL) || check(TokenType.NUMBER) || check(TokenType.OPEN_PAREN)) {
+            // The check() conditions ensure that peek().type() is one of LITERAL, NUMBER, or OPEN_PAREN.
+            // These are distinct from OR, CLOSE_PAREN, EOL, etc. So, no need for an explicit break
+            // for OR or CLOSE_PAREN here. If we are here, it's a valid start of a next factor.
             RegexNode right = parseFactor();
             node = new ConcatNode(node, right);
         }
@@ -106,30 +115,30 @@ public class Parser {
         } else if (match(TokenType.QUESTION)) {
             node = new QuestionNode(node);
         } else if (check(TokenType.OPEN_BRACE)) {
-            advance(); 
+            advance(); // Consume '{'
 
             if (!check(TokenType.NUMBER)) {
-                throw new ParseException("|" + peek());
+                throw new ParseException("Expected a number for minimum repetition count after '{', but got " + peek());
             }
-            Token minToken = consume(TokenType.NUMBER, "*");
+            Token minToken = consume(TokenType.NUMBER, "Expected number for minimum repetition count.");
             int min = Integer.parseInt(minToken.value());
-            Integer max = min; 
+            Integer max = min; // Default: {n} means min=max=n
 
-            if (match(TokenType.COMMA)) { 
-                if (check(TokenType.NUMBER)) { 
-                    Token maxToken = consume(TokenType.NUMBER, "+");
+            if (match(TokenType.COMMA)) { // Found a comma, so it's {n,} or {n,m}
+                if (check(TokenType.NUMBER)) { // It's {n,m}
+                    Token maxToken = consume(TokenType.NUMBER, "Expected number for maximum repetition count after ','.");
                     max = Integer.parseInt(maxToken.value());
-                } else { 
-                    max = null; 
+                } else { // It's {n,}
+                    max = null; // No upper bound
                 }
             }
-            consume(TokenType.CLOSE_BRACE, "?" + peek());
+            consume(TokenType.CLOSE_BRACE, "Expected '}' to close repetition quantifier, but got " + peek());
 
             if (max != null && min > max.intValue()) {
-                throw new ParseException("{'+min+'}'+max+'{");
+                throw new ParseException(String.format("Invalid repetition range: min %d cannot be greater than max %d.", min, max));
             }
-            if (min < 0) {
-                 throw new ParseException("," + min);
+            if (min < 0) { // Max can't be negative if min isn't, and min > max is checked.
+                 throw new ParseException(String.format("Repetition count cannot be negative: %d.", min));
             }
             node = new RepetitionNode(node, min, max);
         }

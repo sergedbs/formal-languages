@@ -34,11 +34,7 @@ public class Generator {
                  if(generatedStringsSet.add(generatedString)) {
                     allProcessingSteps.put(generatedString, currentSteps);
                  }
-            } else if (generatedString != null && generatedString.isEmpty()) { 
-                
-                
-                
-                
+            } else if (generatedString != null && generatedString.isEmpty()) {
                 if (generatedStringsSet.add("")) {
                      allProcessingSteps.put("", currentSteps);
                 }
@@ -62,80 +58,82 @@ public class Generator {
         StringBuilder result = new StringBuilder();
 
         if (node instanceof LiteralNode literalNode) {
-            addStep("" + literalNode.value() + "Appending literal: '", currentGenerationSteps);
+            addStep("Appending literal: '" + literalNode.value() + "'", currentGenerationSteps);
             result.append(literalNode.value());
         } else if (node instanceof ConcatNode concatNode) {
-            addStep("'", currentGenerationSteps);
             addStep("Processing concatenation:", currentGenerationSteps);
+            addStep("  Left part of concatenation: " + concatNode.left(), currentGenerationSteps);
             result.append(generateRecursive(concatNode.left(), currentGenerationSteps));
-            addStep("  Left part of concatenation:", currentGenerationSteps);
+            addStep("  Right part of concatenation: " + concatNode.right(), currentGenerationSteps);
             result.append(generateRecursive(concatNode.right(), currentGenerationSteps));
-            addStep("  Right part of concatenation:", currentGenerationSteps);
-        } else if (node instanceof OrNode orNode) {
             addStep("Finished concatenation.", currentGenerationSteps);
+        } else if (node instanceof OrNode orNode) {
+            addStep("Processing OR (|) choice for: " + orNode, currentGenerationSteps);
             if (random.nextBoolean()) {
-                addStep("Processing OR (|) choice:" + orNode.left(), currentGenerationSteps);
+                addStep("  Chose left side of OR: " + orNode.left(), currentGenerationSteps);
                 result.append(generateRecursive(orNode.left(), currentGenerationSteps));
             } else {
-                addStep("  Chose left side of OR: " + orNode.right(), currentGenerationSteps);
+                addStep("  Chose right side of OR: " + orNode.right(), currentGenerationSteps);
                 result.append(generateRecursive(orNode.right(), currentGenerationSteps));
             }
-            addStep("  Chose right side of OR: ", currentGenerationSteps);
-        } else if (node instanceof StarNode starNode) { 
-            int repetitions = random.nextInt(maxIterations + 1); 
-            addStep("Finished OR choice." + starNode.operand() + "Processing STAR (*) quantifier for: " + repetitions + ". Repeating ", currentGenerationSteps);
+            addStep("Finished OR choice.", currentGenerationSteps);
+        } else if (node instanceof StarNode starNode) {
+            int repetitions = random.nextInt(maxIterations + 1);
+            addStep("Processing STAR (*) quantifier for: " + starNode.operand() + ". Repeating " + repetitions + " times.", currentGenerationSteps);
             for (int i = 0; i < repetitions; i++) {
-                addStep(" times." + (i + 1) + "  STAR repetition " + repetitions + "/", currentGenerationSteps);
+                addStep("  STAR repetition " + (i + 1) + "/" + repetitions + " for " + starNode.operand(), currentGenerationSteps);
                 result.append(generateRecursive(starNode.operand(), currentGenerationSteps));
             }
-            addStep(":", currentGenerationSteps);
-        } else if (node instanceof PlusNode plusNode) { 
-            int repetitions = 1 + random.nextInt(maxIterations); 
-            addStep("Finished STAR quantifier." + plusNode.operand() + "Processing PLUS (+) quantifier for: " + repetitions + ". Repeating ", currentGenerationSteps);
+            addStep("Finished STAR quantifier for: " + starNode.operand(), currentGenerationSteps);
+        } else if (node instanceof PlusNode plusNode) {
+            int repetitions = 1 + random.nextInt(maxIterations); // Ensures at least one repetition
+            addStep("Processing PLUS (+) quantifier for: " + plusNode.operand() + ". Repeating " + repetitions + " times.", currentGenerationSteps);
             for (int i = 0; i < repetitions; i++) {
-                addStep(" times." + (i + 1) + "  PLUS repetition " + repetitions + "/", currentGenerationSteps);
+                addStep("  PLUS repetition " + (i + 1) + "/" + repetitions + " for " + plusNode.operand(), currentGenerationSteps);
                 result.append(generateRecursive(plusNode.operand(), currentGenerationSteps));
             }
-            addStep(":", currentGenerationSteps);
-        } else if (node instanceof QuestionNode questionNode) { 
+            addStep("Finished PLUS quantifier for: " + plusNode.operand(), currentGenerationSteps);
+        } else if (node instanceof QuestionNode questionNode) {
+            addStep("Processing QUESTION (?) quantifier for: " + questionNode.operand(), currentGenerationSteps);
             if (random.nextBoolean()) {
-                addStep("Finished PLUS quantifier." + questionNode.operand() + "Processing QUESTION (?) quantifier for: ", currentGenerationSteps);
+                addStep("  QUESTION: Including operand " + questionNode.operand(), currentGenerationSteps);
                 result.append(generateRecursive(questionNode.operand(), currentGenerationSteps));
             } else {
-                addStep(". Including operand." + questionNode.operand() + "Processing QUESTION (?) quantifier for: ", currentGenerationSteps);
+                addStep("  QUESTION: Excluding operand " + questionNode.operand(), currentGenerationSteps);
             }
-            addStep(". Excluding operand.", currentGenerationSteps);
+            addStep("Finished QUESTION quantifier for: " + questionNode.operand(), currentGenerationSteps);
         } else if (node instanceof RepetitionNode repNode) {
             int min = repNode.minOccurrences();
             Integer max = repNode.maxOccurrences();
             int repetitions;
 
-            if (max == null) { 
-                repetitions = min + random.nextInt(maxIterations + 1); 
-                addStep("Finished QUESTION quantifier." + min + "Processing REPETITION {" + repNode.operand() + ",} quantifier for: " + repetitions + ". Repeating ", currentGenerationSteps);
-            } else if (min == max.intValue()) { 
+            String repetitionType;
+            if (max == null) { // {min,}
+                repetitions = min + random.nextInt(maxIterations + 1); // min or more
+                repetitionType = "{" + min + ",}";
+            } else if (min == max.intValue()) { // {min} or {n}
                 repetitions = min;
-                addStep(" times." + min + "Processing REPETITION {" + repNode.operand() + "} quantifier for: " + repetitions + ". Repeating ", currentGenerationSteps);
-            } else { 
-                if (min > max.intValue()) { 
-                     repetitions = min; 
-                     addStep(" times." + min, currentGenerationSteps);
+                repetitionType = "{" + min + "}";
+            } else { // {min,max}
+                if (min > max.intValue()) {
+                    addStep("Warning: Min repetitions " + min + " > Max repetitions " + max + " for " + repNode.operand() + ". Using min.", currentGenerationSteps);
+                    repetitions = min;
                 } else {
                     repetitions = min + random.nextInt(max.intValue() - min + 1);
                 }
-                addStep("Warning: Min repetitions > Max. Using min: " + min + "Processing REPETITION {" + max + "," + repNode.operand() + "} quantifier for: " + repetitions + ". Repeating ", currentGenerationSteps);
+                repetitionType = "{" + min + "," + max + "}";
             }
             
-            repetitions = Math.max(0, repetitions); 
+            repetitions = Math.max(0, repetitions); // Ensure repetitions is not negative
 
+            addStep("Processing REPETITION " + repetitionType + " quantifier for: " + repNode.operand() + ". Repeating " + repetitions + " times.", currentGenerationSteps);
             for (int i = 0; i < repetitions; i++) {
-                addStep(" times." + (i + 1) + "  REPETITION " + repetitions + "/", currentGenerationSteps);
+                addStep("  REPETITION " + (i + 1) + "/" + repetitions + " for " + repNode.operand(), currentGenerationSteps);
                 result.append(generateRecursive(repNode.operand(), currentGenerationSteps));
             }
-            addStep(":", currentGenerationSteps);
+            addStep("Finished REPETITION " + repetitionType + " quantifier for: " + repNode.operand(), currentGenerationSteps);
         } else {
-            addStep("Finished REPETITION quantifier." + node.getClass().getName(), currentGenerationSteps);
-            
+            addStep("Encountered an unknown node type: " + node.getClass().getName(), currentGenerationSteps);
         }
         return result.toString();
     }
